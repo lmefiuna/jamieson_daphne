@@ -8,15 +8,19 @@ Originally this design used a 1000BASE-T Ethernet PHY chip located outside the F
 
 ## IP Cores
 
-This design uses the "Gigabit Ethernet PCS PMA" IP core from Xilinx. It is included in every Vivado build and is free to use. The build script pulls this core. 
+This design uses the "Gigabit Ethernet PCS PMA" IP core from Xilinx. It is included in every Vivado build and is free to use. The build script pulls this core automatically.
 
 ## Hardware
 
-This demo design is targetted towards the Xilinx KC705 development board. Plug an SFP or SFP+ module into the SFP cage on the development board and connect the other end to a GbE port in a switch or PC.
+This demo design is targets the XC7K325TFF900-2 FPGA on the Xilinx KC705 development board. Plug an SFP or SFP+ module into the SFP cage on the development board and connect the other end to a GbE port in a switch or PC.
+
+Note there is a difference between the KC705 v1.0 and v1.1 PCB revisions. One of the SFP differential pairs used by this design is flipped on the v1.1 PCB. See comments in top_level.vhd for details.
+
+In the FPGA there are some various registers and memories that are connected to the internal address data bus. Specifically there is a BlockRAM, a couple of static readonly registers, a read-write test register, and a FIFO. The address mapping for these things is defined in the kc705_package.vhd file.
 
 ## Software
 
-Some example routines are included, they are written in Python and included in the src directory. The default Ethernet MAC address (00:80:55:EC:00:0C) and IP address (192.168.133.12) are defined in the VHDL package file.
+Some example routines are included, they are written in Python and included in the src directory. The default Ethernet MAC address (00:80:55:EC:00:0C) and IP address (192.168.133.12) are defined in the VHDL package file. These python programs will read from and write to the various test registers and memories mentioned above.
 
 ## Instructions
 
