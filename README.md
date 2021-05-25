@@ -14,7 +14,9 @@ This design uses the "Gigabit Ethernet PCS PMA" IP core from Xilinx. It is inclu
 
 This demo design is targetted towards the Xilinx KC705 development board. Plug an SFP or SFP+ module into the SFP cage on the development board and connect the other end to a GbE port in a switch or PC.
 
-The default Ethernet MAC address (00:80:55:EC:00:0C) and IP address (192.168.133.12) are defined in the VHDL package file.
+## Software
+
+Some example routines are included, they are written in Python and included in the src directory. The default Ethernet MAC address (00:80:55:EC:00:0C) and IP address (192.168.133.12) are defined in the VHDL package file.
 
 ## Instructions
 
@@ -22,4 +24,6 @@ This demo is to be built from the command like in Vivado Non-Project mode:
 
   vivado -mode tcl -source vivado_batch.tcl
 
-Build it and program the FPGA on the KC705 board with the bit file. Then connect it to the network and try pinging the IP address. It should respond. Then you can try reading and writing using the special OEI UDP packets. There are some registers and buffer memories in this demo design to try out.
+Build it and program the FPGA on the KC705 board with the bit file. Then connect it to the network and try pinging the IP address. It should respond. Then you can try reading and writing using the special OEI UDP packets (see the example code in Python). There are some registers and buffer memories in this demo design to try out.
+
+JTO
