@@ -530,17 +530,18 @@ begin
         WREN => fifo_WREN
     );
 
-	-- DAPHNE has 6 user LEDs, assign LED7 and LED6 to debug header
+	-- DAPHNE has 6 user LEDs, assign LED7 and LED6 to debug header.
+	-- NOTE these LEDS are ACTIVE LOW on DAPHNE
 	-- define what these mean here:
 
-	led_temp(0) <= sfp_los;          -- SFP optical Loss of Signal
-    led_temp(1) <= status_vector(0); -- set if link is UP 
-	led_temp(2) <= '1' when (status_vector(11 downto 10)="10") else '0'; -- set link speed is 1000
-	led_temp(3) <= gmii_rx_dv; -- ethernet RX activity
-	led_temp(4) <= gmii_tx_en; -- ethernet TX activity
-	led_temp(5) <= testreg_we; -- write to test register
-	led_temp(6) <= '1' when (bram0_we="1111") else '0';   -- write to BlockRAM
-	led_temp(7) <= fifo_WREN or fifo_RDEN; -- accessing FIFO
+	led_temp(0) <= not sfp_los;          -- SFP optical Loss of Signal
+    led_temp(1) <= not status_vector(0); -- set if link is UP 
+	led_temp(2) <= '0' when (status_vector(11 downto 10)="10") else '1'; -- set link speed is 1000
+	led_temp(3) <= not gmii_rx_dv; -- ethernet RX activity
+	led_temp(4) <= not gmii_tx_en; -- ethernet TX activity
+	led_temp(5) <= not testreg_we; -- write to test register
+	led_temp(6) <= '0' when (bram0_we="1111") else '1';   -- write to BlockRAM
+	led_temp(7) <= not (fifo_WREN or fifo_RDEN); -- accessing FIFO
 
 	-- LED driver logic. pulse stretch fast signals so they are visible (aka a "one shot")
 	-- Use a fast clock to sample the signal led_temp. whenever led_temp is HIGH, led0_reg

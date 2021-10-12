@@ -1,4 +1,4 @@
-# Off the Shelf Ethernet Interface (OEI) for SFP
+# Off the Shelf Ethernet Interface (OEI) Demo for DAPHNE
 
 ## Introduction
 
@@ -8,15 +8,19 @@ Originally this design used a 1000BASE-T Ethernet PHY chip located outside the F
 
 ## IP Cores
 
-This design uses the "Gigabit Ethernet PCS PMA" IP core from Xilinx. It is included in every Vivado build and is free to use. The build script pulls this core automatically.
+This design uses the "Gigabit Ethernet PCS PMA" IP core from Xilinx. It is included in every Vivado build and is free to use. The build script pulls this core automatically from the XCIX file.
 
 ## Hardware
 
-This demo design is targets the XC7K325TFF900-2 FPGA on the Xilinx KC705 development board. Plug an SFP or SFP+ module into the SFP cage on the development board and connect the other end to a GbE port in a switch or PC.
+This demo design targets the XC7A200T-3FBG676C FPGA used on the DAPHNE board. Plug an SFP or SFP+ module into the SFP cage for DAQ1 and connect the other end to a GbE port in a switch or PC.
 
-Note there is a difference between the KC705 v1.0 and v1.1 PCB revisions. One of the SFP differential pairs used by this design is flipped on the v1.1 PCB. See comments in top_level.vhd for details.
+In the FPGA there are some various registers and memories that are connected to the internal address data bus. Specifically there is a BlockRAM, a couple of static readonly registers, a read-write test register, and a FIFO. The address mapping for these things is defined in the VHDL package file.
 
-In the FPGA there are some various registers and memories that are connected to the internal address data bus. Specifically there is a BlockRAM, a couple of static readonly registers, a read-write test register, and a FIFO. The address mapping for these things is defined in the kc705_package.vhd file.
+Note the XCIX IP core package needed to be regenerated because the Artix family uses different MGTs.
+
+### Clocks
+
+This design requires a 125MHz MGT refclk and a 200MHz system clock (FPGA_MCLK). The microcontroller on the DAPHNE must configure the clock generator to produce these frequencies.
 
 ## Software
 
@@ -28,6 +32,6 @@ This demo is to be built from the command like in Vivado Non-Project mode:
 
   vivado -mode tcl -source vivado_batch.tcl
 
-Build it and program the FPGA on the KC705 board with the bit file. Then connect it to the network and try pinging the IP address. It should respond. Then you can try reading and writing using the special OEI UDP packets (see the example code in Python). There are some registers and buffer memories in this demo design to try out.
+Build it and program the FPGA on the DAPHNE board with the bit file. Then connect it to the network and try pinging the IP address. It should respond. Then you can try reading and writing using the special OEI UDP packets (see the example code in Python). There are some registers and buffer memories in this demo design to try out.
 
 JTO
