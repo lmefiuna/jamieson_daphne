@@ -56,9 +56,13 @@ class OEI(object):
 
 thing = OEI("192.168.133.12")
 
-# single read
+# single read from register at 0xaa55, should return 0xdeadbeef
 
-print hex(thing.read(0x1620,1)[2])
+print hex(thing.read(0xaa55,1)[2])
+
+# single read from register at 0x1974, should return the IP core status vector
+
+print hex(thing.read(0x1974,1)[2])
 
 # write to test register and read it back
 
