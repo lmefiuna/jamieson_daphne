@@ -1,6 +1,6 @@
-# KC705 constraints
+# DAPHNE constraints
 # jamieson@fnal.gov
-# 11 Sept 2018
+# 11 October 2021 
 
 # #############################################################################
 # Timing constraints...
@@ -27,70 +27,66 @@ set_clock_groups -name async_groups -asynchronous \
 # #############################################################################
 # Pin LOCation and IOSTANDARD Constraints...
 
-# Ethernet GTX is QUAD117-2 -> X1Y33 in XC7K325T -> X0Y10 (per UG476 fig A-6)
-# refclk is 125MHz on MGTREFCLK0_117.  On KC705 rev 1.0 boards the SFP TX and RX diff pairs are inverted!
+# Ethernet MGT is "TX1" is QUAD216-1 -> X0Y5 in XC7A200T FBG676
+# refclk is 125MHz on MGTREFCLK0_216 pins F11/E11.  No inversion on DAPHNE board.
 
-set_property LOC GTXE2_CHANNEL_X0Y10 [get_cells */*/*/transceiver_inst/gtwizard_inst/*/gtwizard_i/gt0_GTWIZARD_i/gtxe2_i]
-set_property LOC G8 [get_ports gtrefclk_p]
+set_property LOC GTPE2_CHANNEL_X0Y5 [get_cells */*/*/transceiver_inst/gtwizard_inst/*/gtwizard_i/gt0_GTWIZARD_i/gtpe2_i]
+set_property LOC F11 [get_ports gtrefclk_p]
 
-# SFP module LOSS OF SIGNAL indicator IO bank VCCO=2.5V
+# SFP module LOSS OF SIGNAL indicator IO bank VCCO=3.3V
 
-set_property PACKAGE_PIN P19 [get_ports sfp_los]
-set_property IOSTANDARD LVCMOS25 [get_ports {sfp_los}]
+set_property PACKAGE_PIN L8 [get_ports sfp_los]
+set_property IOSTANDARD LVTTL [get_ports {sfp_los}]
 
-# SFP module TX DISABLE control, IO bank VCCO=VADJ_FPGA=2.5V
+# SFP module TX DISABLE control, IO bank 35, VCCO=3.3V
 
-set_property PACKAGE_PIN Y20 [get_ports sfp_tx_dis]
-set_property IOSTANDARD LVCMOS25 [get_ports {sfp_tx_dis}]
+set_property PACKAGE_PIN K8 [get_ports sfp_tx_dis]
+set_property IOSTANDARD LVTTL [get_ports {sfp_tx_dis}]
 
-# reset pin is from pushbutton SW7, I/O bank 34 VCCO=1.5V
+# reset pin is from uC, I/O bank 35, VCCO=3.3V note ACTIVE LOW on DAPHNE
 
-set_property PACKAGE_PIN AB7 [get_ports reset]
-set_property IOSTANDARD LVCMOS15 [get_ports {reset}]
+set_property PACKAGE_PIN J8 [get_ports reset_n]
+set_property IOSTANDARD LVTTL [get_ports {reset_n}]
 
-# SYSCLK is LVDS 200MHz comes in on bank 33, VCCO=1.5V. Normally LVDS requires VCCO=1.8V
-# But LVDS input is OK in this bank if internal termination resistor is NOT used.
+# SYSCLK is LVDS 200MHz comes in on bank 33, VCCO=2.5V.
+# Use internal LVDS 100 ohm termination
 
-set_property PACKAGE_PIN  AD12 [get_ports sysclk_p]
-set_property PACKAGE_PIN  AD11 [get_ports sysclk_n]
-set_property IOSTANDARD LVDS [get_ports sysclk_p]
-set_property IOSTANDARD LVDS [get_ports sysclk_n]
-set_property DIFF_TERM FALSE [get_ports sysclk_p]
-set_property DIFF_TERM FALSE [get_ports sysclk_n]
+set_property PACKAGE_PIN  AA4 [get_ports sysclk_p]
+set_property PACKAGE_PIN  AB4 [get_ports sysclk_n]
+set_property IOSTANDARD LVDS_25 [get_ports sysclk_p]
+set_property IOSTANDARD LVDS_25 [get_ports sysclk_n]
+set_property DIFF_TERM TRUE [get_ports sysclk_p]
+set_property DIFF_TERM TRUE [get_ports sysclk_n]
 
+# All 6 user LEDS are in bank 35, VCCO=3.3V, all LEDs Active High
 
-# User LEDs are driven by pins in several different banks, some with different I/O voltages
-# external level converter chips are used to drive actual LEDs with 3.3V logic.
-# Assume default value for VADJ_FPGA is 2.5V.
+# Assign LED7 to debug header pin 1
+set_property PACKAGE_PIN C3 [get_ports {led[7]}]
 
-# User LED7 bank 18 VCCO=VADJ_FPGA=2.5V
-set_property PACKAGE_PIN F16 [get_ports {led[7]}]
-set_property IOSTANDARD LVCMOS25 [get_ports {led[7]}]
+# Assign LED6 to debug header pin 2
+set_property PACKAGE_PIN F3 [get_ports {led[6]}]
 
-# User LED6..5 bank 17 VCCO=VADJ_FPGA=2.5V
-set_property PACKAGE_PIN E18 [get_ports {led[6]}]
-set_property PACKAGE_PIN G19 [get_ports {led[5]}]
-set_property IOSTANDARD LVCMOS25 [get_ports {led[6]}]
-set_property IOSTANDARD LVCMOS25 [get_ports {led[5]}]
+# LED[5..0] map to user StatLED[5..0] on DAPHNE
+set_property PACKAGE_PIN D3 [get_ports {led[5]}]
+set_property PACKAGE_PIN A4 [get_ports {led[4]}]
+set_property PACKAGE_PIN B4 [get_ports {led[3]}]
+set_property PACKAGE_PIN A5 [get_ports {led[2]}]
+set_property PACKAGE_PIN B5 [get_ports {led[1]}]
+set_property PACKAGE_PIN C4 [get_ports {led[0]}]
 
-# User LED4 bank 13 VCCO=VADJ_FPGA=2.5V
-set_property PACKAGE_PIN AE26 [get_ports {led[4]}]
-set_property IOSTANDARD LVCMOS25 [get_ports {led[4]}]
-
-# User LED3..0 bank 13 VCCO=1.5V
-set_property PACKAGE_PIN AB9 [get_ports {led[3]}]
-set_property PACKAGE_PIN AC9 [get_ports {led[2]}]
-set_property PACKAGE_PIN AA8 [get_ports {led[1]}]
-set_property PACKAGE_PIN AB8 [get_ports {led[0]}]
-set_property IOSTANDARD LVCMOS15 [get_ports {led[3]}]
-set_property IOSTANDARD LVCMOS15 [get_ports {led[2]}]
-set_property IOSTANDARD LVCMOS15 [get_ports {led[1]}]
-set_property IOSTANDARD LVCMOS15 [get_ports {led[0]}]
+set_property IOSTANDARD LVTTL [get_ports {led[7]}]
+set_property IOSTANDARD LVTTL [get_ports {led[6]}]
+set_property IOSTANDARD LVTTL [get_ports {led[5]}]
+set_property IOSTANDARD LVTTL [get_ports {led[4]}]
+set_property IOSTANDARD LVTTL [get_ports {led[3]}]
+set_property IOSTANDARD LVTTL [get_ports {led[2]}]
+set_property IOSTANDARD LVTTL [get_ports {led[1]}]
+set_property IOSTANDARD LVTTL [get_ports {led[0]}]
 
 # #############################################################################
 # General bitstream constraints...
 
 set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
-set_property CFGBVS GND [current_design]
-set_property CONFIG_VOLTAGE 1.8 [current_design]
+set_property CFGBVS VCCO [current_design]
+set_property CONFIG_VOLTAGE 3.3 [current_design]
 

@@ -8,7 +8,7 @@
 set_param general.maxThreads 4
 set outputDir ./output
 file mkdir $outputDir
-set_part xc7k325t-ffg900-2
+set_part xc7a200t-fbg676-3
 
 # load the sources and constraints...
 

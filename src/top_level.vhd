@@ -1,10 +1,8 @@
 -- top_level.vhd
--- OEI test code for Xilinx KC705 Development Board
--- Target: XC7K325T-2FFG900C
+-- OEI test code for DAPHNE
+-- Target: XC7A200T-3FBG676C
 -- Uses single GTX Transceiver connected to SFP optical module
 -- Line rate is 1.25Gbps with refclk 125MHz
--- GTX transceiver is in bank 117, transceiver 2: MGTXRXP2_117_G4, MGTXRXN2_117_G3, MGTXTXP2_117_H2, MGTXTXN2_117_H1
--- 125MHz refclk is LVDS: MGTREFCLK0P_117_G8 / SGMIICLK_Q0_P, MGTREFCLK0N_117_G7 / SGMIICLK_Q0_N
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -20,7 +18,7 @@ use work.kc705_package.all;
 
 entity top_level is
 port(
-    reset:      in  std_logic; -- active high reset from board pushbutton called "cpu_reset" on schematics
+    reset_n:    in  std_logic; -- active LOW reset from the microcontroller
     sysclk_p:   in  std_logic; -- system clock LVDS 200MHz 
 	sysclk_n:   in  std_logic; -- 
     gtrefclk_p: in  std_logic; -- refclk LVDS 125MHz
@@ -42,96 +40,147 @@ architecture top_level_arch of top_level is
 	-- Xilinx IP core includes the GTX transceiver, updated for Vivado 2018.1, extra debug ports enabled
 	-- so that the TX and RX polarity can be flipped.
 
-    component gig_ethernet_pcs_pma_0 
-      port (
+    -- component gig_ethernet_pcs_pma_0 
+      -- port (
 
-      gtrefclk_p           : in std_logic;                     -- Very high quality clock for GT transceiver
-      gtrefclk_n           : in std_logic;                    
-      gtrefclk_out         : out std_logic;                  
-      gtrefclk_bufg_out    : out std_logic;                           
+      -- gtrefclk_p           : in std_logic;                     -- Very high quality clock for GT transceiver
+      -- gtrefclk_n           : in std_logic;                    
+      -- gtrefclk_out         : out std_logic;                  
+      -- gtrefclk_bufg_out    : out std_logic;                           
       
-      txp                  : out std_logic;                    -- Differential +ve of serial transmission from PMA to PMD.
-      txn                  : out std_logic;                    -- Differential -ve of serial transmission from PMA to PMD.
-      rxp                  : in std_logic;                     -- Differential +ve for serial reception from PMD to PMA.
-      rxn                  : in std_logic;                     -- Differential -ve for serial reception from PMD to PMA.
+      -- txp                  : out std_logic;                    -- Differential +ve of serial transmission from PMA to PMD.
+      -- txn                  : out std_logic;                    -- Differential -ve of serial transmission from PMA to PMD.
+      -- rxp                  : in std_logic;                     -- Differential +ve for serial reception from PMD to PMA.
+      -- rxn                  : in std_logic;                     -- Differential -ve for serial reception from PMD to PMA.
 
-      mmcm_locked_out      : out std_logic;                     -- Locked signal from MMCM
-      userclk_out          : out std_logic;                  
-      userclk2_out         : out std_logic;                 
-      rxuserclk_out          : out std_logic;               
-      rxuserclk2_out         : out std_logic;               
-      independent_clock_bufg : in std_logic;                
-      pma_reset_out         : out std_logic;                     -- transceiver PMA reset signal
-      resetdone             :out std_logic;
+      -- mmcm_locked_out      : out std_logic;                     -- Locked signal from MMCM
+      -- userclk_out          : out std_logic;                  
+      -- userclk2_out         : out std_logic;                 
+      -- rxuserclk_out          : out std_logic;               
+      -- rxuserclk2_out         : out std_logic;               
+      -- independent_clock_bufg : in std_logic;                
+      -- pma_reset_out         : out std_logic;                     -- transceiver PMA reset signal
+      -- resetdone             :out std_logic;
 
-      gmii_txd             : in std_logic_vector(7 downto 0);  -- Transmit data from client MAC.
-      gmii_tx_en           : in std_logic;                     -- Transmit control signal from client MAC.
-      gmii_tx_er           : in std_logic;                     -- Transmit control signal from client MAC.
-      gmii_rxd             : out std_logic_vector(7 downto 0); -- Received Data to client MAC.
-      gmii_rx_dv           : out std_logic;                    -- Received control signal to client MAC.
-      gmii_rx_er           : out std_logic;                    -- Received control signal to client MAC.
-      gmii_isolate         : out std_logic;                    -- Tristate control to electrically isolate GMII.
+      -- gmii_txd             : in std_logic_vector(7 downto 0);  -- Transmit data from client MAC.
+      -- gmii_tx_en           : in std_logic;                     -- Transmit control signal from client MAC.
+      -- gmii_tx_er           : in std_logic;                     -- Transmit control signal from client MAC.
+      -- gmii_rxd             : out std_logic_vector(7 downto 0); -- Received Data to client MAC.
+      -- gmii_rx_dv           : out std_logic;                    -- Received control signal to client MAC.
+      -- gmii_rx_er           : out std_logic;                    -- Received control signal to client MAC.
+      -- gmii_isolate         : out std_logic;                    -- Tristate control to electrically isolate GMII.
 
-      configuration_vector : in std_logic_vector(4 downto 0);  -- Alternative to MDIO interface.
+      -- configuration_vector : in std_logic_vector(4 downto 0);  -- Alternative to MDIO interface.
 
-      an_interrupt         : out std_logic;                    -- Interrupt to processor to signal that Auto-Negotiation has completed
-      an_adv_config_vector : in std_logic_vector(15 downto 0); -- Alternate interface to program REG4 (AN ADV)
-      an_restart_config    : in std_logic;                     -- Alternate signal to modify AN restart bit in REG0
+      -- an_interrupt         : out std_logic;                    -- Interrupt to processor to signal that Auto-Negotiation has completed
+      -- an_adv_config_vector : in std_logic_vector(15 downto 0); -- Alternate interface to program REG4 (AN ADV)
+      -- an_restart_config    : in std_logic;                     -- Alternate signal to modify AN restart bit in REG0
 
-      gt0_txpmareset_in         : in  std_logic;
-      gt0_txpcsreset_in         : in  std_logic;
-      gt0_rxpmareset_in         : in  std_logic;
-      gt0_rxpcsreset_in         : in  std_logic;
-      gt0_rxbufreset_in         : in  std_logic;
-      gt0_rxbufstatus_out       : out std_logic_vector(2 downto 0);
-      gt0_txbufstatus_out       : out std_logic_vector(1 downto 0);
-      gt0_dmonitorout_out       : out std_logic_vector(7 downto 0);
+      -- gt0_txpmareset_in         : in  std_logic;
+      -- gt0_txpcsreset_in         : in  std_logic;
+      -- gt0_rxpmareset_in         : in  std_logic;
+      -- gt0_rxpcsreset_in         : in  std_logic;
+      -- gt0_rxbufreset_in         : in  std_logic;
+      -- gt0_rxbufstatus_out       : out std_logic_vector(2 downto 0);
+      -- gt0_txbufstatus_out       : out std_logic_vector(1 downto 0);
+      -- gt0_dmonitorout_out       : out std_logic_vector(7 downto 0);
       
-      gt0_drpaddr_in            : in   std_logic_vector(8 downto 0);
-      gt0_drpclk_in             : in   std_logic;
-      gt0_drpdi_in              : in   std_logic_vector(15 downto 0);
-      gt0_drpdo_out             : out  std_logic_vector(15 downto 0);
-      gt0_drpen_in              : in   std_logic;
-      gt0_drprdy_out            : out  std_logic;
-      gt0_drpwe_in              : in   std_logic;
-      gt0_rxchariscomma_out     : out std_logic_vector(1 downto 0);
-      gt0_rxcharisk_out         : out std_logic_vector(1 downto 0);
-      gt0_rxbyteisaligned_out   : out std_logic;
-      gt0_rxbyterealign_out     : out std_logic;
-      gt0_rxcommadet_out        : out std_logic;
-      gt0_txpolarity_in         : in  std_logic;
-      gt0_txinhibit_in          : in  std_logic;
-      gt0_txdiffctrl_in         : in  std_logic_vector(3 downto 0);
-      gt0_txpostcursor_in       : in  std_logic_vector(4 downto 0);
-      gt0_txprecursor_in        : in  std_logic_vector(4 downto 0);
-      gt0_rxpolarity_in         : in  std_logic;
-      gt0_rxdfelpmreset_in      : in  std_logic;
-      gt0_rxdfeagcovrden_in     : in  std_logic;
-      gt0_rxlpmen_in            : in  std_logic;
-      gt0_txprbssel_in          : in  std_logic_vector(2 downto 0);
-      gt0_txprbsforceerr_in     : in  std_logic;
-      gt0_rxprbscntreset_in     : in  std_logic;
-      gt0_rxprbserr_out         : out std_logic;
-      gt0_rxprbssel_in          : in  std_logic_vector(2 downto 0);
-      gt0_loopback_in           : in  std_logic_vector(2 downto 0);
-      gt0_txresetdone_out       : out std_logic;
-      gt0_rxresetdone_out       : out std_logic;
-      gt0_rxdisperr_out         : out std_logic_vector(1 downto 0);
-      gt0_rxnotintable_out      : out std_logic_vector(1 downto 0);
-      gt0_eyescanreset_in       : in  std_logic;
-      gt0_eyescandataerror_out  : out std_logic;
-      gt0_eyescantrigger_in     : in  std_logic;
-      gt0_rxcdrhold_in          : in  std_logic;
-      gt0_rxmonitorout_out      : out std_logic_vector(6 downto 0);
-      gt0_rxmonitorsel_in       : in  std_logic_vector(1 downto 0);
+      -- gt0_drpaddr_in            : in   std_logic_vector(8 downto 0);
+      -- gt0_drpclk_in             : in   std_logic;
+      -- gt0_drpdi_in              : in   std_logic_vector(15 downto 0);
+      -- gt0_drpdo_out             : out  std_logic_vector(15 downto 0);
+      -- gt0_drpen_in              : in   std_logic;
+      -- gt0_drprdy_out            : out  std_logic;
+      -- gt0_drpwe_in              : in   std_logic;
+      -- gt0_rxchariscomma_out     : out std_logic_vector(1 downto 0);
+      -- gt0_rxcharisk_out         : out std_logic_vector(1 downto 0);
+      -- gt0_rxbyteisaligned_out   : out std_logic;
+      -- gt0_rxbyterealign_out     : out std_logic;
+      -- gt0_rxcommadet_out        : out std_logic;
+      -- gt0_txpolarity_in         : in  std_logic;
+      -- gt0_txinhibit_in          : in  std_logic;
+      -- gt0_txdiffctrl_in         : in  std_logic_vector(3 downto 0);
+      -- gt0_txpostcursor_in       : in  std_logic_vector(4 downto 0);
+      -- gt0_txprecursor_in        : in  std_logic_vector(4 downto 0);
+      -- gt0_rxpolarity_in         : in  std_logic;
+      -- gt0_rxdfelpmreset_in      : in  std_logic;
+      -- gt0_rxdfeagcovrden_in     : in  std_logic;
+      -- gt0_rxlpmen_in            : in  std_logic;
+      -- gt0_txprbssel_in          : in  std_logic_vector(2 downto 0);
+      -- gt0_txprbsforceerr_in     : in  std_logic;
+      -- gt0_rxprbscntreset_in     : in  std_logic;
+      -- gt0_rxprbserr_out         : out std_logic;
+      -- gt0_rxprbssel_in          : in  std_logic_vector(2 downto 0);
+      -- gt0_loopback_in           : in  std_logic_vector(2 downto 0);
+      -- gt0_txresetdone_out       : out std_logic;
+      -- gt0_rxresetdone_out       : out std_logic;
+      -- gt0_rxdisperr_out         : out std_logic_vector(1 downto 0);
+      -- gt0_rxnotintable_out      : out std_logic_vector(1 downto 0);
+      -- gt0_eyescanreset_in       : in  std_logic;
+      -- gt0_eyescandataerror_out  : out std_logic;
+      -- gt0_eyescantrigger_in     : in  std_logic;
+      -- gt0_rxcdrhold_in          : in  std_logic;
+      -- gt0_rxmonitorout_out      : out std_logic_vector(6 downto 0);
+      -- gt0_rxmonitorsel_in       : in  std_logic_vector(1 downto 0);
 
-      status_vector        : out std_logic_vector(15 downto 0); -- Core status.
-      reset                : in std_logic;                     -- Asynchronous reset for entire core.
-      signal_detect        : in std_logic;                      -- Input from PMD to indicate presence of optical input.
-      gt0_qplloutclk_out     : out std_logic;
-      gt0_qplloutrefclk_out  : out std_logic
+      -- status_vector        : out std_logic_vector(15 downto 0); -- Core status.
+      -- reset                : in std_logic;                     -- Asynchronous reset for entire core.
+      -- signal_detect        : in std_logic;                      -- Input from PMD to indicate presence of optical input.
+      -- gt0_qplloutclk_out     : out std_logic;
+      -- gt0_qplloutrefclk_out  : out std_logic
+    -- );
+    -- end component;
+
+	-- this version of the IP core (16.2) was generated for Artix 7 
+	-- Vivado 2020.2
+	-- extra debug ports are NOT needed on DAPHNE version since
+	--  we don't need to invert the TXD and RXD pairs going to the SFP module
+
+	component gig_ethernet_pcs_pma_0
+      port(
+		gtrefclk_p           : in std_logic;                     -- Very high quality clock for GT transceiver
+		gtrefclk_n           : in std_logic;                    
+		gtrefclk_out         : out std_logic;                  
+		gtrefclk_bufg_out    : out std_logic;                           
+      
+		txp                  : out std_logic;                    -- Differential +ve of serial transmission from PMA to PMD.
+		txn                  : out std_logic;                    -- Differential -ve of serial transmission from PMA to PMD.
+		rxp                  : in std_logic;                     -- Differential +ve for serial reception from PMD to PMA.
+		rxn                  : in std_logic;                     -- Differential -ve for serial reception from PMD to PMA.
+
+		mmcm_locked_out      : out std_logic;                     -- Locked signal from MMCM
+		userclk_out          : out std_logic;                  
+		userclk2_out         : out std_logic;                 
+		rxuserclk_out          : out std_logic;               
+		rxuserclk2_out         : out std_logic;               
+		independent_clock_bufg : in std_logic;                
+		pma_reset_out         : out std_logic;                     -- transceiver PMA reset signal
+		resetdone             :out std_logic;
+
+		gmii_txd             : in std_logic_vector(7 downto 0);  -- Transmit data from client MAC.
+		gmii_tx_en           : in std_logic;                     -- Transmit control signal from client MAC.
+		gmii_tx_er           : in std_logic;                     -- Transmit control signal from client MAC.
+		gmii_rxd             : out std_logic_vector(7 downto 0); -- Received Data to client MAC.
+		gmii_rx_dv           : out std_logic;                    -- Received control signal to client MAC.
+		gmii_rx_er           : out std_logic;                    -- Received control signal to client MAC.
+		gmii_isolate         : out std_logic;                    -- Tristate control to electrically isolate GMII.
+	
+		configuration_vector : in std_logic_vector(4 downto 0);  -- Alternative to MDIO interface.
+		an_interrupt         : out std_logic;                    -- Interrupt to processor to signal that Auto-Negotiation has completed
+		an_adv_config_vector : in std_logic_vector(15 downto 0); -- Alternate interface to program REG4 (AN ADV)
+		an_restart_config    : in std_logic;                     -- Alternate signal to modify AN restart bit in REG0
+
+		status_vector        : out std_logic_vector(15 downto 0); -- Core status.
+		reset                : in std_logic;                      -- Asynchronous reset for entire core.
+		signal_detect        : in std_logic;                      -- Input from PMD to indicate presence of optical input.
+		gt0_pll0outclk_out     : out std_logic;
+		gt0_pll0outrefclk_out  : out std_logic;
+		gt0_pll1outclk_out     : out std_logic;
+		gt0_pll1outrefclk_out  : out std_logic;
+		gt0_pll0refclklost_out : out std_logic;
+		gt0_pll0lock_out       : out std_logic
     );
-    end component;
+	end component;
 
     component ethernet_interface -- Ryan's OEI core logic
     port(
@@ -192,7 +241,11 @@ architecture top_level_arch of top_level is
     signal edge_reg: std_logic;
     signal led_temp, led1_reg, led0_reg: std_logic_vector(7 downto 0);
 
+	signal reset: std_logic;
+
 begin
+
+	reset <= not reset_n;
 
 	-- 200MHz sysclk is LVDS, receive it with IBUFDS and drive it out on a BUFG net. sysclk comes in on bank 33
 	-- which has VCCO=1.5V. IOSTANDARD is LVDS and the termination resistor is external (DIFF_TERM=FALSE)
@@ -215,9 +268,97 @@ begin
     -- Core Functionality: Auto Negotiation, No MDIO
     -- Shared Logic: Include Shared Logic in Core
 
-    phy_inst: gig_ethernet_pcs_pma_0
-    port map(
-        gtrefclk_p    => gtrefclk_p_ibuf,
+    -- phy_inst: gig_ethernet_pcs_pma_0
+    -- port map(
+        -- gtrefclk_p    => gtrefclk_p_ibuf,
+        -- gtrefclk_n    => gtrefclk_n_ibuf,
+        -- gtrefclk_out  => open,
+        -- gtrefclk_bufg_out => gtrefclk_bufg_out, -- constant 125MHz derived from REFCLK
+        -- txp               => sfp_tx_p,
+        -- txn               => sfp_tx_n,
+        -- rxp               => sfp_rx_p,
+        -- rxn               => sfp_rx_n,
+        -- mmcm_locked_out        => open,
+        -- userclk_out            => open, 
+        -- userclk2_out           => oeiclk, -- 125MHz clock to drive OEI logic, does it run constantly?
+        -- rxuserclk_out          => open,
+        -- rxuserclk2_out         => open, 
+        -- independent_clock_bufg => sysclk, -- 200MHz system clock always running
+        -- pma_reset_out          => open,
+        -- resetdone              => open,
+        -- gmii_txd     => gmii_txd,
+        -- gmii_tx_en   => gmii_tx_en,
+        -- gmii_tx_er   => gmii_tx_er,
+        -- gmii_rxd     => gmii_rxd,
+        -- gmii_rx_dv   => gmii_rx_dv,
+        -- gmii_rx_er   => gmii_rx_er,
+        -- gmii_isolate => open,
+        -- configuration_vector(4 downto 0) => "10000",  -- Autoneg=1, Isolate=0, PowerDown=0, Loopback=0, Unidir=0 
+        -- an_interrupt          => open,
+        -- an_adv_config_vector  => X"0020",  -- AN FD, see PG047 table 2-55
+        -- an_restart_config     => '0',
+        -- status_vector         => status_vector, -- PG047 table 2-41
+        -- reset                 => reset,
+        -- signal_detect         => '1',   -- no optics, signal is always present
+        -- gt0_qplloutclk_out    => open,  -- QPLL not used?
+        -- gt0_qplloutrefclk_out => open,
+		
+		-- -- KC705 PCB rev1.0 has the SFP RX and TX polarity inverted. In order to get
+		-- -- control of the polarity we have to enable a whole bunch of debug ports, which are 
+		-- -- listed here. These inputs are using the default values from the IP core example design.
+
+      -- gt0_txpmareset_in         => '0',
+      -- gt0_txpcsreset_in         => '0',
+      -- gt0_rxpmareset_in         => '0',
+      -- gt0_rxpcsreset_in         => '0',
+      -- gt0_rxbufreset_in         => '0',
+      -- gt0_rxbufstatus_out       => open,
+      -- gt0_txbufstatus_out       => open,
+      -- gt0_dmonitorout_out       => open,
+      -- gt0_drpaddr_in            => (others=>'0'),
+      -- gt0_drpclk_in             => gtrefclk_bufg_out,
+      -- gt0_drpdi_in              => (others=>'0'),
+      -- gt0_drpdo_out             => open,
+      -- gt0_drpen_in              => '0',
+      -- gt0_drprdy_out            => open,
+      -- gt0_drpwe_in              => '0',
+      -- gt0_rxchariscomma_out     => open,
+      -- gt0_rxcharisk_out         => open,
+      -- gt0_rxbyteisaligned_out   => open,
+      -- gt0_rxbyterealign_out     => open,
+      -- gt0_rxcommadet_out        => open,
+      -- gt0_txpolarity_in         => '0', -- NO inversion on DAPHNE
+      -- gt0_txinhibit_in          => '0',
+      -- gt0_txdiffctrl_in         => "1000",
+      
+      -- gt0_txpostcursor_in       => (others=>'0'),
+      -- gt0_txprecursor_in        => (others=>'0'),
+      -- gt0_rxpolarity_in         => '0', -- NO inversion on DAPHNE
+      -- gt0_rxdfelpmreset_in      => '0',
+      -- gt0_rxdfeagcovrden_in     => '0',
+      -- gt0_rxlpmen_in            => '1',
+      -- gt0_txprbssel_in          => (others=>'0'),
+      -- gt0_txprbsforceerr_in     => '0',
+      -- gt0_rxprbscntreset_in     => '0',
+      -- gt0_rxprbserr_out         => open,
+      -- gt0_rxprbssel_in          => (others=>'0'),
+      -- gt0_loopback_in           => (others=>'0'),
+      -- gt0_txresetdone_out       => open,
+      -- gt0_rxresetdone_out       => open,
+      -- gt0_rxdisperr_out         => open,
+      -- gt0_rxnotintable_out      => open,
+      -- gt0_eyescanreset_in       => '0',
+      -- gt0_eyescandataerror_out  => open,
+      -- gt0_eyescantrigger_in     => '0',
+      -- gt0_rxcdrhold_in          => '0',
+      -- gt0_rxmonitorout_out      => open,
+      -- gt0_rxmonitorsel_in       => (others=>'0')
+
+    -- );
+ 
+	phy_inst: gig_ethernet_pcs_pma_0 
+	port map(
+		gtrefclk_p    => gtrefclk_p_ibuf,
         gtrefclk_n    => gtrefclk_n_ibuf,
         gtrefclk_out  => open,
         gtrefclk_bufg_out => gtrefclk_bufg_out, -- constant 125MHz derived from REFCLK
@@ -247,62 +388,14 @@ begin
         status_vector         => status_vector, -- PG047 table 2-41
         reset                 => reset,
         signal_detect         => '1',   -- no optics, signal is always present
-        gt0_qplloutclk_out    => open,  -- QPLL not used?
-        gt0_qplloutrefclk_out => open,
-		
-		-- KC705 PCB rev1.0 has the SFP RX and TX polarity inverted. In order to get
-		-- control of the polarity we have to enable a whole bunch of debug ports, which are 
-		-- listed here. These inputs are using the default values from the IP core example design.
+		gt0_pll0outclk_out => open,
+		gt0_pll0outrefclk_out => open,
+		gt0_pll1outclk_out => open,
+		gt0_pll1outrefclk_out => open,
+		gt0_pll0refclklost_out => open,
+		gt0_pll0lock_out => open
+      );
 
-      gt0_txpmareset_in         => '0',
-      gt0_txpcsreset_in         => '0',
-      gt0_rxpmareset_in         => '0',
-      gt0_rxpcsreset_in         => '0',
-      gt0_rxbufreset_in         => '0',
-      gt0_rxbufstatus_out       => open,
-      gt0_txbufstatus_out       => open,
-      gt0_dmonitorout_out       => open,
-      gt0_drpaddr_in            => (others=>'0'),
-      gt0_drpclk_in             => gtrefclk_bufg_out,
-      gt0_drpdi_in              => (others=>'0'),
-      gt0_drpdo_out             => open,
-      gt0_drpen_in              => '0',
-      gt0_drprdy_out            => open,
-      gt0_drpwe_in              => '0',
-      gt0_rxchariscomma_out     => open,
-      gt0_rxcharisk_out         => open,
-      gt0_rxbyteisaligned_out   => open,
-      gt0_rxbyterealign_out     => open,
-      gt0_rxcommadet_out        => open,
-      gt0_txpolarity_in         => '1', -- FLIP IT!!!
-      gt0_txinhibit_in          => '0',
-      gt0_txdiffctrl_in         => "1000",
-      
-      gt0_txpostcursor_in       => (others=>'0'),
-      gt0_txprecursor_in        => (others=>'0'),
-      gt0_rxpolarity_in         => '1', -- FLIP IT!!!
-      gt0_rxdfelpmreset_in      => '0',
-      gt0_rxdfeagcovrden_in     => '0',
-      gt0_rxlpmen_in            => '1',
-      gt0_txprbssel_in          => (others=>'0'),
-      gt0_txprbsforceerr_in     => '0',
-      gt0_rxprbscntreset_in     => '0',
-      gt0_rxprbserr_out         => open,
-      gt0_rxprbssel_in          => (others=>'0'),
-      gt0_loopback_in           => (others=>'0'),
-      gt0_txresetdone_out       => open,
-      gt0_rxresetdone_out       => open,
-      gt0_rxdisperr_out         => open,
-      gt0_rxnotintable_out      => open,
-      gt0_eyescanreset_in       => '0',
-      gt0_eyescandataerror_out  => open,
-      gt0_eyescantrigger_in     => '0',
-      gt0_rxcdrhold_in          => '0',
-      gt0_rxmonitorout_out      => open,
-      gt0_rxmonitorsel_in       => (others=>'0')
-
-    );
- 
 	-- make sure SFP transmitter is enabled!
 
 	sfp_tx_dis <= '0';
@@ -437,7 +530,7 @@ begin
         WREN => fifo_WREN
     );
 
-	-- KC705 has 8 user LEDs: (7)(6)(5)(4)(3)(2)(1)(0) 
+	-- DAPHNE has 6 user LEDs, assign LED7 and LED6 to debug header
 	-- define what these mean here:
 
 	led_temp(0) <= sfp_los;          -- SFP optical Loss of Signal
