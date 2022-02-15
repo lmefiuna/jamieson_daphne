@@ -26,7 +26,7 @@ This design requires a 125MHz MGT refclk and a 100MHz system clock (FPGA_MCLK). 
 
 ### Timestamp
 
-A free running 64 counter is used as the timestamp. THis 
+A free running 64 bit counter is used as the timestamp.
 
 ### AFE Front End
 
@@ -47,7 +47,7 @@ Some example routines are included, they are written in Python and included in t
 ### Memory Map
 
 The memory map is defined in daphne_package.vhd and the address space is 32 bit. Data width is 64 bits.
-
+```
 0x70000 - 0x703FF  Test BlockRam 1kx36, R/W, 36 bit
 0xAA55             Test register R/O always returns 0xDEADBEEF, R/O, 32 bit
 0x1974             Status vector for the PCS/PMA IP Core, R/O, 16 bit
@@ -102,7 +102,7 @@ The memory map is defined in daphne_package.vhd and the address space is 32 bit.
 0x302B 			   Write anything to BITSLIP AFE4 data7
 0x302C 			   Write anything to BITSLIP AFE4 frame
 
-0x4000 			   Write fine delay value for AFE0 data0, W/O 5 bit
+0x4000 			   Write fine delay value for AFE0 data0, W/O range 0-31 (5 bit)
 0x4001 			   Write fine delay value for AFE0 data1
 0x4002 			   Write fine delay value for AFE0 data2
 0x4003 			   Write fine delay value for AFE0 data3
@@ -194,7 +194,7 @@ The memory map is defined in daphne_package.vhd and the address space is 32 bit.
 0x42B0000 - 0x42B03FF Spy Buffer AFE4 data7
 0x42C0000 - 0x42C03FF Spy Buffer AFE4 frame
 0x42D0000 - 0x42D03FF Spy Buffer for Timestamp (64-bit)
-
+```
 ### Manual Alignment Procedure
 
 1. Put AFEs into fixed test pattern output mode
