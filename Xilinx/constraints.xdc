@@ -1,17 +1,17 @@
 # DAPHNE constraints
 # jamieson@fnal.gov
-# 11 October 2021 
+# 15 Feb 2022
 
 # #############################################################################
 # Timing constraints...
 # Note: Xilinx IP core constraints will be applied automatically
 # when the *.xcix file is added to the project
 
-# Net sysclk is 200MHz clock, comes in on differential I/O
+# Net sysclk is 100MHz clock, comes in on differential I/O
 # Net oeiclk is 125 and is generated from the GTX transceiver, which it gets from the reference clock
 
-create_clock -name sysclk -period 5.000  [get_ports sysclk_p]
-create_clock -name oeiclk -period 8.000  [get_ports gtrefclk_p]
+create_clock -name sysclk -period 10.000  [get_ports sysclk_p]
+create_clock -name oeiclk -period 8.000   [get_ports gtrefclk_p]
 
 set_clock_groups -name async_groups -asynchronous \
 -group [get_clocks -include_generated_clocks sysclk] \
@@ -82,6 +82,123 @@ set_property IOSTANDARD LVTTL [get_ports {led[3]}]
 set_property IOSTANDARD LVTTL [get_ports {led[2]}]
 set_property IOSTANDARD LVTTL [get_ports {led[1]}]
 set_property IOSTANDARD LVTTL [get_ports {led[0]}]
+
+# LVDS output clock to AFEs
+
+set_property PACKAGE_PIN  AA4   [get_ports afe_clk_p]
+set_property PACKAGE_PIN  AB4   [get_ports afe_clk_n]
+set_property IOSTANDARD LVDS_25 [get_ports afe_clk_p]
+set_property IOSTANDARD LVDS_25 [get_ports afe_clk_n]
+
+# LVDS inputs from AFE 0 (Bank 12)
+
+set_property PACKAGE_PIN  Y15  [get_ports AFE0_D0_P]
+set_property PACKAGE_PIN  AA15 [get_ports AFE0_D0_N]
+set_property PACKAGE_PIN  AB16 [get_ports AFE0_D1_P]
+set_property PACKAGE_PIN  AC16 [get_ports AFE0_D1_N]
+set_property PACKAGE_PIN  AA17 [get_ports AFE0_D2_P]
+set_property PACKAGE_PIN  AB17 [get_ports AFE0_D2_N]
+set_property PACKAGE_PIN  AE18 [get_ports AFE0_D3_P]
+set_property PACKAGE_PIN  AF18 [get_ports AFE0_D3_N]
+set_property PACKAGE_PIN  AC18 [get_ports AFE0_D4_P]
+set_property PACKAGE_PIN  AD18 [get_ports AFE0_D4_N]
+set_property PACKAGE_PIN  AF19 [get_ports AFE0_D5_P]
+set_property PACKAGE_PIN  AF20 [get_ports AFE0_D5_N]
+set_property PACKAGE_PIN  AD20 [get_ports AFE0_D6_P]
+set_property PACKAGE_PIN  AE20 [get_ports AFE0_D6_N]
+set_property PACKAGE_PIN  AD21 [get_ports AFE0_D7_P]
+set_property PACKAGE_PIN  AE21 [get_ports AFE0_D7_N]
+set_property PACKAGE_PIN  AA20 [get_ports AFE0_FR_P]
+set_property PACKAGE_PIN  AB20 [get_ports AFE0_FR_N]
+
+# LVDS inputs from AFE 1 (Bank 16)
+
+set_property PACKAGE_PIN  B25 [get_ports AFE1_D0_P]
+set_property PACKAGE_PIN  A25 [get_ports AFE1_D0_N]
+set_property PACKAGE_PIN  A23 [get_ports AFE1_D1_P]
+set_property PACKAGE_PIN  A24 [get_ports AFE1_D1_N]
+set_property PACKAGE_PIN  E21 [get_ports AFE1_D2_P]
+set_property PACKAGE_PIN  D21 [get_ports AFE1_D2_N]
+set_property PACKAGE_PIN  C21 [get_ports AFE1_D3_P]
+set_property PACKAGE_PIN  B21 [get_ports AFE1_D3_N]
+set_property PACKAGE_PIN  B19 [get_ports AFE1_D4_P]
+set_property PACKAGE_PIN  A19 [get_ports AFE1_D4_N]
+set_property PACKAGE_PIN  A17 [get_ports AFE1_D5_P]
+set_property PACKAGE_PIN  A18 [get_ports AFE1_D5_N]
+set_property PACKAGE_PIN  C17 [get_ports AFE1_D6_P]
+set_property PACKAGE_PIN  B17 [get_ports AFE1_D6_N]
+set_property PACKAGE_PIN  E16 [get_ports AFE1_D7_P]
+set_property PACKAGE_PIN  D16 [get_ports AFE1_D7_N]
+set_property PACKAGE_PIN  D19 [get_ports AFE1_FR_P]
+set_property PACKAGE_PIN  C19 [get_ports AFE1_FR_N]
+
+# LVDS inputs from AFE 2 (Bank 15)
+
+set_property PACKAGE_PIN  K22 [get_ports AFE2_D0_P]
+set_property PACKAGE_PIN  K23 [get_ports AFE2_D0_N]
+set_property PACKAGE_PIN  J24 [get_ports AFE2_D1_P]
+set_property PACKAGE_PIN  H24 [get_ports AFE2_D1_N]
+set_property PACKAGE_PIN  J25 [get_ports AFE2_D2_P]
+set_property PACKAGE_PIN  J26 [get_ports AFE2_D2_N]
+set_property PACKAGE_PIN  H26 [get_ports AFE2_D3_P]
+set_property PACKAGE_PIN  G26 [get_ports AFE2_D3_N]
+set_property PACKAGE_PIN  E25 [get_ports AFE2_D4_P]
+set_property PACKAGE_PIN  D25 [get_ports AFE2_D4_N]
+set_property PACKAGE_PIN  E26 [get_ports AFE2_D5_P]
+set_property PACKAGE_PIN  D26 [get_ports AFE2_D5_N]
+set_property PACKAGE_PIN  F23 [get_ports AFE2_D6_P]
+set_property PACKAGE_PIN  E23 [get_ports AFE2_D6_N]
+set_property PACKAGE_PIN  G22 [get_ports AFE2_D7_P]
+set_property PACKAGE_PIN  F22 [get_ports AFE2_D7_N]
+set_property PACKAGE_PIN  H21 [get_ports AFE2_FR_P]
+set_property PACKAGE_PIN  H22 [get_ports AFE2_FR_N]
+
+# LVDS inputs from AFE 3 (Bank 14)
+
+set_property PACKAGE_PIN  T24 [get_ports AFE3_D0_P]
+set_property PACKAGE_PIN  T25 [get_ports AFE3_D0_N]
+set_property PACKAGE_PIN  T23 [get_ports AFE3_D1_P]
+set_property PACKAGE_PIN  R23 [get_ports AFE3_D1_N]
+set_property PACKAGE_PIN  R25 [get_ports AFE3_D2_P]
+set_property PACKAGE_PIN  P25 [get_ports AFE3_D2_N]
+set_property PACKAGE_PIN  R26 [get_ports AFE3_D3_P]
+set_property PACKAGE_PIN  P26 [get_ports AFE3_D3_N]
+set_property PACKAGE_PIN  N26 [get_ports AFE3_D4_P]
+set_property PACKAGE_PIN  M26 [get_ports AFE3_D4_N]
+set_property PACKAGE_PIN  M24 [get_ports AFE3_D5_P]
+set_property PACKAGE_PIN  M25 [get_ports AFE3_D5_N]
+set_property PACKAGE_PIN  L24 [get_ports AFE3_D6_P]
+set_property PACKAGE_PIN  L25 [get_ports AFE3_D6_N]
+set_property PACKAGE_PIN  K25 [get_ports AFE3_D7_P]
+set_property PACKAGE_PIN  K26 [get_ports AFE3_D7_N]
+set_property PACKAGE_PIN  M21 [get_ports AFE3_FR_P]
+set_property PACKAGE_PIN  M22 [get_ports AFE3_FR_N]
+
+# LVDS inputs from AFE 4 (Bank 14)
+
+set_property PACKAGE_PIN  W20 [get_ports AFE4_D0_P]
+set_property PACKAGE_PIN  Y20 [get_ports AFE4_D0_N]
+set_property PACKAGE_PIN  Y22 [get_ports AFE4_D1_P]
+set_property PACKAGE_PIN  Y23 [get_ports AFE4_D1_N]
+set_property PACKAGE_PIN  AA22 [get_ports AFE4_D2_P]
+set_property PACKAGE_PIN  AA23 [get_ports AFE4_D2_N]
+set_property PACKAGE_PIN  AB24 [get_ports AFE4_D3_P]
+set_property PACKAGE_PIN  AC24 [get_ports AFE4_D3_N]
+set_property PACKAGE_PIN  AB26 [get_ports AFE4_D4_P]
+set_property PACKAGE_PIN  AC26 [get_ports AFE4_D4_N]
+set_property PACKAGE_PIN  Y25  [get_ports AFE4_D5_P]
+set_property PACKAGE_PIN  AA25 [get_ports AFE4_D5_N]
+set_property PACKAGE_PIN  W25 [get_ports AFE4_D6_P]
+set_property PACKAGE_PIN  Y26 [get_ports AFE4_D6_N]
+set_property PACKAGE_PIN  V26 [get_ports AFE4_D7_P]
+set_property PACKAGE_PIN  W26 [get_ports AFE4_D7_N]
+set_property PACKAGE_PIN  U21 [get_ports AFE4_FR_P]
+set_property PACKAGE_PIN  V21 [get_ports AFE4_FR_N]
+
+set_property IOSTANDARD LVDS_25 [get_ports AFE?_??_P]
+set_property IOSTANDARD LVDS_25 [get_ports AFE?_??_N]
+set_property DIFF_TERM TRUE [get_ports AFE?_??_P]
+set_property DIFF_TERM TRUE [get_ports AFE?_??_N]
 
 # #############################################################################
 # General bitstream constraints...
