@@ -416,15 +416,15 @@ begin
     afe_p(25) <= AFE2_D7_P;  afe_n(25) <= AFE2_D7_N;
     afe_p(26) <= AFE2_FR_P;  afe_n(26) <= AFE2_FR_N;
 
-    afe_p(27) <= AFE4_D0_P;  afe_n(27) <= AFE4_D0_N;
-    afe_p(28) <= AFE4_D1_P;  afe_n(28) <= AFE4_D1_N;
-    afe_p(29) <= AFE4_D2_P;  afe_n(29) <= AFE4_D2_N;
-    afe_p(30) <= AFE4_D3_P;  afe_n(30) <= AFE4_D3_N;
-    afe_p(31) <= AFE4_D4_P;  afe_n(31) <= AFE4_D4_N;
-    afe_p(32) <= AFE4_D5_P;  afe_n(32) <= AFE4_D5_N;
-    afe_p(33) <= AFE4_D6_P;  afe_n(33) <= AFE4_D6_N;
-    afe_p(34) <= AFE4_D7_P;  afe_n(34) <= AFE4_D7_N;
-    afe_p(35) <= AFE4_FR_P;  afe_n(35) <= AFE4_FR_N;
+    afe_p(27) <= AFE3_D0_P;  afe_n(27) <= AFE3_D0_N;
+    afe_p(28) <= AFE3_D1_P;  afe_n(28) <= AFE3_D1_N;
+    afe_p(29) <= AFE3_D2_P;  afe_n(29) <= AFE3_D2_N;
+    afe_p(30) <= AFE3_D3_P;  afe_n(30) <= AFE3_D3_N;
+    afe_p(31) <= AFE3_D4_P;  afe_n(31) <= AFE3_D4_N;
+    afe_p(32) <= AFE3_D5_P;  afe_n(32) <= AFE3_D5_N;
+    afe_p(33) <= AFE3_D6_P;  afe_n(33) <= AFE3_D6_N;
+    afe_p(34) <= AFE3_D7_P;  afe_n(34) <= AFE3_D7_N;
+    afe_p(35) <= AFE3_FR_P;  afe_n(35) <= AFE3_FR_N;
 
     afe_p(36) <= AFE4_D0_P;  afe_n(36) <= AFE4_D0_N;
     afe_p(37) <= AFE4_D1_P;  afe_n(37) <= AFE4_D1_N;

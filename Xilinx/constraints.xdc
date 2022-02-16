@@ -8,7 +8,7 @@
 # when the *.xcix file is added to the project
 
 # Net sysclk is 100MHz clock, comes in on differential I/O
-# Net oeiclk is 125 and is generated from the GTX transceiver, which it gets from the reference clock
+# Net oeiclk is 125MHz and is generated from the GTX transceiver, which it gets from the reference clock
 
 create_clock -name sysclk -period 10.000  [get_ports sysclk_p]
 create_clock -name oeiclk -period 8.000   [get_ports gtrefclk_p]
@@ -48,8 +48,14 @@ set_property IOSTANDARD LVTTL [get_ports {sfp_tx_dis}]
 set_property PACKAGE_PIN J8 [get_ports reset_n]
 set_property IOSTANDARD LVTTL [get_ports {reset_n}]
 
-# SYSCLK is LVDS 200MHz comes in on bank 33, VCCO=2.5V.
-# Use internal LVDS 100 ohm termination
+# external trigger is from rear panel SMB connector (on schematic net is GPI)
+# I/O bank 35, VCCO=3.3V 
+
+set_property PACKAGE_PIN D5 [get_ports trig_ext]
+set_property IOSTANDARD LVTTL [get_ports {trig_ext}]
+
+# SYSCLK is LVDS 100MHz comes in on bank 33, VCCO=2.5V.
+# Use internal LVDS 100 ohm termination. On schematic this is FPGA_MCLK1.
 
 set_property PACKAGE_PIN  AA4 [get_ports sysclk_p]
 set_property PACKAGE_PIN  AB4 [get_ports sysclk_n]
@@ -83,10 +89,10 @@ set_property IOSTANDARD LVTTL [get_ports {led[2]}]
 set_property IOSTANDARD LVTTL [get_ports {led[1]}]
 set_property IOSTANDARD LVTTL [get_ports {led[0]}]
 
-# LVDS output clock to AFEs
+# LVDS output clock to AFEs (on schematic 62.5MHz_FPGA_)
 
-set_property PACKAGE_PIN  AA4   [get_ports afe_clk_p]
-set_property PACKAGE_PIN  AB4   [get_ports afe_clk_n]
+set_property PACKAGE_PIN  AF5   [get_ports afe_clk_p]
+set_property PACKAGE_PIN  AF4   [get_ports afe_clk_n]
 set_property IOSTANDARD LVDS_25 [get_ports afe_clk_p]
 set_property IOSTANDARD LVDS_25 [get_ports afe_clk_n]
 
@@ -174,7 +180,7 @@ set_property PACKAGE_PIN  K26 [get_ports AFE3_D7_N]
 set_property PACKAGE_PIN  M21 [get_ports AFE3_FR_P]
 set_property PACKAGE_PIN  M22 [get_ports AFE3_FR_N]
 
-# LVDS inputs from AFE 4 (Bank 14)
+# LVDS inputs from AFE 4 (Bank 13)
 
 set_property PACKAGE_PIN  W20 [get_ports AFE4_D0_P]
 set_property PACKAGE_PIN  Y20 [get_ports AFE4_D0_N]

@@ -1,4 +1,4 @@
-# Off the Shelf Ethernet Interface (OEI) Demo for DAPHNE
+# OEI Gigabit Ethernet for DAPHNE
 
 ## Introduction
 
@@ -24,13 +24,13 @@ This design requires a 125MHz MGT refclk and a 100MHz system clock (FPGA_MCLK). 
 
 ## DAPHNE specific logic
 
-### Timestamp
+### Timestamp Counter
 
 A free running 64 bit counter is used as the timestamp.
 
 ### AFE Front End
 
-This design includes the AFE front end logic, which enables the user to MANUALLY deskew and align the high speed AFE data outputs (IDELAY) and convert the serial data stream to parallel (ISERDES). There are 45 channels, 9 per AFE chip (8 data channels and one "FCLK" or frame channel).
+This design includes the AFE front end logic, in which the user MANUALLY deskews and aligns the high speed AFE data outputs (IDELAY) and convert the serial data stream to parallel (ISERDES). There are 45 channels, 9 per AFE chip (8 data channels and one "FCLK" or frame channel). See procedure below.
 
 ### Spy Buffers
 
