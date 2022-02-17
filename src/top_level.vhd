@@ -17,6 +17,7 @@ use unimacro.vcomponents.all;
 use work.daphne_package.all;
 
 entity top_level is
+generic(version: std_logic_vector(27 downto 0) := X"1234567"); -- git commit number is passed in from tcl
 port(
 
     reset_n:    in  std_logic; -- active LOW reset from the microcontroller
@@ -650,6 +651,7 @@ begin
                (X"000000000000"&status_vector) when std_match(rx_addr_reg, STATVEC_ADDR) else
                (X"00000000deadbeef")           when std_match(rx_addr_reg, DEADBEEF_ADDR) else
                (X"0000000"&bram0_do)           when std_match(rx_addr_reg, BRAM0_ADDR) else
+               (X"000000000"&version)          when std_match(rx_addr_reg, GITVER_ADDR) else  -- 28 bit GIT commit hash
                (X"000000000000" & spyout( 0))  when std_match(rx_addr_reg, SPYBUF00_BASEADDR) else
                (X"000000000000" & spyout( 1))  when std_match(rx_addr_reg, SPYBUF01_BASEADDR) else
                (X"000000000000" & spyout( 2))  when std_match(rx_addr_reg, SPYBUF02_BASEADDR) else

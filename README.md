@@ -51,6 +51,7 @@ The memory map is defined in daphne_package.vhd and the address space is 32 bit.
 0x70000 - 0x703FF  Test BlockRam 1kx36, R/W, 36 bit
 0xAA55             Test register R/O always returns 0xDEADBEEF, R/O, 32 bit
 0x1974             Status vector for the PCS/PMA IP Core, R/O, 16 bit
+0x9000             Read the git commit hash ID, 28 bits, R/O
 0x12345678         Test register, R/W, 64 bit
 0x80000000         Test FIFO, 512 x 64, R/W, 64-bit
 
