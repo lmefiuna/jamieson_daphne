@@ -67,10 +67,10 @@ set_property DIFF_TERM TRUE [get_ports sysclk_n]
 # All 6 user LEDS are in bank 35, VCCO=3.3V, all LEDs Active High
 
 # Assign LED7 to debug header pin 1
-set_property PACKAGE_PIN C3 [get_ports {led[7]}]
+# set_property PACKAGE_PIN C3 [get_ports {led[7]}]
 
 # Assign LED6 to debug header pin 2
-set_property PACKAGE_PIN F3 [get_ports {led[6]}]
+# set_property PACKAGE_PIN F3 [get_ports {led[6]}]
 
 # LED[5..0] map to user StatLED[5..0] on DAPHNE
 set_property PACKAGE_PIN D3 [get_ports {led[5]}]
@@ -80,8 +80,8 @@ set_property PACKAGE_PIN A5 [get_ports {led[2]}]
 set_property PACKAGE_PIN B5 [get_ports {led[1]}]
 set_property PACKAGE_PIN C4 [get_ports {led[0]}]
 
-set_property IOSTANDARD LVTTL [get_ports {led[7]}]
-set_property IOSTANDARD LVTTL [get_ports {led[6]}]
+# set_property IOSTANDARD LVTTL [get_ports {led[7]}]
+# set_property IOSTANDARD LVTTL [get_ports {led[6]}]
 set_property IOSTANDARD LVTTL [get_ports {led[5]}]
 set_property IOSTANDARD LVTTL [get_ports {led[4]}]
 set_property IOSTANDARD LVTTL [get_ports {led[3]}]

@@ -93,7 +93,7 @@ port(
     -- misc board i/o
 
     trig_ext:   in std_logic; -- from back panel SMA connector, trigger on rising edge
-    led:        out std_logic_vector(7 downto 0) -- KC705 user LEDs active high
+    led:        out std_logic_vector(5 downto 0) -- DAPHNE PCB LEDs are active LOW
 
   );
 end top_level;
@@ -240,7 +240,7 @@ architecture top_level_arch of top_level is
 
     signal count_reg: std_logic_vector(23 downto 0);
     signal edge_reg: std_logic;
-    signal led_temp, led1_reg, led0_reg: std_logic_vector(7 downto 0);
+    signal led_temp, led1_reg, led0_reg: std_logic_vector(5 downto 0);
 
     -- DAPHNE specific signals...
 
@@ -778,18 +778,16 @@ begin
         WREN => fifo_WREN
     );
 
-	-- DAPHNE has 6 user LEDs, assign LED7 and LED6 to debug header.
-	-- NOTE these LEDS are ACTIVE LOW on DAPHNE
-	-- define what these mean here:
+	-- DAPHNE has 6 LEDs controlled by the FPGA, which are labeled on the PCB like this:
+    --  led(5)   led(4)     led(3)     led(2)    led(1)    led(0)
+    -- "LED14"   "LED13"    "LED4"     "LED3"    "LED2"    "LED1"    "LED5 (uC)"     
 
-	led_temp(0) <= not sfp_los;          -- SFP optical Loss of Signal
-    led_temp(1) <= not status_vector(0); -- set if link is UP 
-	led_temp(2) <= '0' when (status_vector(11 downto 10)="10") else '1'; -- set link speed is 1000
-	led_temp(3) <= not gmii_rx_dv; -- ethernet RX activity
-	led_temp(4) <= not gmii_tx_en; -- ethernet TX activity
-	led_temp(5) <= not testreg_we; -- write to test register
-	led_temp(6) <= '0' when (bram0_we="1111") else '1';   -- write to BlockRAM
-	led_temp(7) <= not locked; -- main PLL/MMCM locked
+	led_temp(0) <= locked;           -- "LED1" on if main PLL MMCM locked and clocks running
+    led_temp(1) <= not sfp_los;      -- "LED2" on if SFP module is detecting a signal
+	led_temp(2) <= status_vector(0); -- "LED3" on if Ethernet link is UP
+	led_temp(3) <= '1' when (status_vector(11 downto 10)="10") else '0'; -- "LED4" on if link speed is 1000
+	led_temp(4) <= gmii_rx_dv or gmii_tx_en; -- "LED13" is on if there is ethernet RX or TX activity
+	led_temp(5) <= trig_sync;        -- "LED14" is on when DAPHNE is triggered 
 
 	-- LED driver logic. pulse stretch fast signals so they are visible (aka a "one shot")
 	-- Use a fast clock to sample the signal led_temp. whenever led_temp is HIGH, led0_reg
@@ -803,15 +801,15 @@ begin
             if (reset_async='1') then
                 count_reg <= (others=>'0');
                 edge_reg  <= '0';
-                led0_reg <= X"00";
-				led1_reg <= X"00";
+                led0_reg <= (others=>'0');
+				led1_reg <= (others=>'0');
             else
                 count_reg <= std_logic_vector(unsigned(count_reg) + 1);
                 edge_reg  <= count_reg(23);
 
                 if (edge_reg='0' and count_reg(23)='1') then -- MSB of the counter was JUST set
                     led1_reg <= led0_reg;
-                    led0_reg <= X"00";
+                    led0_reg <= (others=>'0');
                 else
                     led0_reg <= led0_reg or led_temp;
                 end if;
@@ -819,6 +817,8 @@ begin
         end if;
     end process oneshot_proc;
    
-    led <= led1_reg;
+    -- DAPHNE LEDs are ACTIVE LOW
+
+    led <= not led1_reg;
 
 end top_level_arch;

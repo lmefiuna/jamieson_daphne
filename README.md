@@ -40,6 +40,15 @@ There are 45 spy buffers for the AFEs. Each spy buffer is 14 bits wide by 4k dee
 
 All spy buffers are triggered from a common signal, either the external SMA input on the rear panel, or by writing to a specific register from the Ethernet side. Once triggered, the spy buffers capture data, then stop and rearm waiting for the next trigger.
 
+### DAPHNE LEDs
+
+DAPHNE has 6 LEDs controlled by the FPGA, which are labeled on the PCB like this:
+```
+    led(5)   led(4)     led(3)     led(2)    led(1)    led(0)
+    "LED14"   "LED13"    "LED4"     "LED3"    "LED2"    "LED1"    "LED5 (uC)"     
+```
+Note that the rightmost LED "LED5" is controlled by the uC. Refer to the top_level.vhd file for the meaning of these 6 FPGA LEDs.
+
 ## Software
 
 Some example routines are included, they are written in Python and included in the src directory. The default Ethernet MAC address (00:80:55:EC:00:0C) and IP address (192.168.133.12) are defined in the VHDL package file. These python programs will read from and write to the various test registers and memories mentioned above.
