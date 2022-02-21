@@ -33,6 +33,7 @@ architecture febit_arch of febit is
 
     signal din_ibuf, din_delayed : std_logic;
     signal icascade1, icascade2 : std_logic;
+    signal delay_reg : std_logic_vector(4 downto 0);
 
 begin
 
@@ -49,6 +50,17 @@ begin
         IB => din_n,
         O  => din_ibuf
     );
+
+    -- try this: register the delay value and then always try to load this register into idelay...
+
+    delay_proc: process(delay_clk)
+    begin
+        if rising_edge(delay_clk) then
+            if (delay_ld='1') then
+                delay_reg <= delay_dat;
+            end if;
+        end if;
+    end process delay_proc;
 
     -- adjustable input delay 2.5ns in 32 78ps steps
 
@@ -69,11 +81,11 @@ begin
         C           => delay_clk,
         CE          => '0',
         CINVCTRL    => '0',
-        CNTVALUEIN  => delay_dat,
+        CNTVALUEIN  => delay_reg,
         DATAIN      => '0', 
         IDATAIN     => din_ibuf,
         INC         => '0', 
-        LD          => delay_ld,
+        LD          => '1',  -- always load delay value from ext register
         LDPIPEEN    => '0',
         REGRST      => '0' -- no reset on this primitive
     );
