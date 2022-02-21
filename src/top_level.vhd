@@ -195,9 +195,10 @@ architecture top_level_arch of top_level is
         fclkb:  in std_logic;
         sclk:   in std_logic; -- 200MHz system clock, constant, 
         reset:  in std_logic;  
-        delay_di: in  std_logic_vector(4 downto 0);
-        delay_we: in  std_logic_vector(44 downto 0);
-        bitslip:  in  std_logic_vector(44 downto 0);
+        delay_clk: in std_logic;
+        delay_dat: in std_logic_vector(4 downto 0);
+        delay_ld:  in std_logic_vector(44 downto 0);
+        bitslip: in std_logic_vector(44 downto 0);
         afe: out array45x14_type
       );
     end component;
@@ -256,7 +257,7 @@ architecture top_level_arch of top_level is
     signal afe16_bus: array45x16_type;
     signal bitslip: std_logic_vector(44 downto 0);
     signal bitslip_strobe: std_logic;
-    signal delay_we: std_logic_vector(44 downto 0);
+    signal delay_ld: std_logic_vector(44 downto 0);
     signal spyout: array45x16_type;
     
     signal timestamp_reg, timestamp_spy_out: std_logic_vector(63 downto 0);
@@ -453,11 +454,13 @@ begin
         sclk  => sclk,
         reset => reset_async,
 
-        delay_di => rx_data(4 downto 0),
-        delay_we => delay_we(44 downto 0),
-        bitslip  => bitslip(44 downto 0),
+        delay_clk => oeiclk,
+        delay_dat => rx_data(4 downto 0),
+        delay_ld  => delay_ld(44 downto 0),
 
-        afe      => afe_bus -- mclk domain, this bus is 45x14
+        bitslip   => bitslip(44 downto 0),
+
+        afe => afe_bus -- mclk domain, this bus is 45x14
     );
 
     -- pad out 45x14 array to 45x16 array (because spy buffers are 16 bits wide)
@@ -468,13 +471,13 @@ begin
 
     end generate afegen;
 
-    -- address decode delay_we
-    -- this signal originates in oeiclk domain 
-    -- writing this into the idelay module is essentially async
+    -- address decode idelay load pulse
+    -- this signal originates in oeiclk domain (125MHz) and uses this clock to store value in idelay
+    -- note this value range 0-31 and is write only for now, readback is not implemented.
 
     dewe_gen: for i in 44 downto 0 generate
 
-        delay_we(i) <= '1' when (rx_wren='1' and (rx_addr=std_logic_vector(unsigned(DELAY_BASEADDR) + i)) ) else '0';
+        delay_ld(i) <= '1' when (rx_wren='1' and (rx_addr=std_logic_vector(unsigned(DELAY_BASEADDR) + i)) ) else '0';
 
     end generate dewe_gen;
 

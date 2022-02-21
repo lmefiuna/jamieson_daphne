@@ -158,52 +158,58 @@ The memory map is defined in daphne_package.vhd and the address space is 32 bit.
 0x402B 			   Write fine delay value for AFE4 data7
 0x402C 			   Write fine delay value for AFE4 frame
 
-0x4000000 - 0x40003FF Spy Buffer AFE0 data0
-0x4010000 - 0x40103FF Spy Buffer AFE0 data1
-0x4020000 - 0x40203FF Spy Buffer AFE0 data2
-0x4030000 - 0x40303FF Spy Buffer AFE0 data3
-0x4040000 - 0x40403FF Spy Buffer AFE0 data4
-0x4050000 - 0x40503FF Spy Buffer AFE0 data5
-0x4060000 - 0x40603FF Spy Buffer AFE0 data6
-0x4070000 - 0x40703FF Spy Buffer AFE0 data7
-0x4080000 - 0x40803FF Spy Buffer AFE0 frame
-0x4090000 - 0x40903FF Spy Buffer AFE1 data0
-0x40A0000 - 0x40A03FF Spy Buffer AFE1 data1
-0x40B0000 - 0x40B03FF Spy Buffer AFE1 data2
-0x40C0000 - 0x40C03FF Spy Buffer AFE1 data3
-0x40D0000 - 0x40D03FF Spy Buffer AFE1 data4
-0x40E0000 - 0x40E03FF Spy Buffer AFE1 data5
-0x40F0000 - 0x40F03FF Spy Buffer AFE1 data6
-0x4100000 - 0x41003FF Spy Buffer AFE1 data7
-0x4110000 - 0x41103FF Spy Buffer AFE1 frame
-0x4120000 - 0x41203FF Spy Buffer AFE2 data0
-0x4130000 - 0x41303FF Spy Buffer AFE2 data1
-0x4140000 - 0x41403FF Spy Buffer AFE2 data2
-0x4150000 - 0x41503FF Spy Buffer AFE2 data3
-0x4160000 - 0x41603FF Spy Buffer AFE2 data4
-0x4170000 - 0x41703FF Spy Buffer AFE2 data5
-0x4180000 - 0x41803FF Spy Buffer AFE2 data6
-0x4190000 - 0x41903FF Spy Buffer AFE2 data7
-0x41A0000 - 0x41A03FF Spy Buffer AFE2 frame
-0x41B0000 - 0x41B03FF Spy Buffer AFE3 data0
-0x41C0000 - 0x41C03FF Spy Buffer AFE3 data1
-0x41D0000 - 0x41D03FF Spy Buffer AFE3 data2
-0x41E0000 - 0x41E03FF Spy Buffer AFE3 data3
-0x41F0000 - 0x41F03FF Spy Buffer AFE3 data4
-0x4200000 - 0x42003FF Spy Buffer AFE3 data5
-0x4210000 - 0x42103FF Spy Buffer AFE3 data6
-0x4220000 - 0x42203FF Spy Buffer AFE3 data7
-0x4230000 - 0x42303FF Spy Buffer AFE3 frame
-0x4240000 - 0x42403FF Spy Buffer AFE4 data0
-0x4250000 - 0x42503FF Spy Buffer AFE4 data1
-0x4260000 - 0x42603FF Spy Buffer AFE4 data2
-0x4270000 - 0x42703FF Spy Buffer AFE4 data3
-0x4280000 - 0x42803FF Spy Buffer AFE4 data4
-0x4290000 - 0x42903FF Spy Buffer AFE4 data5
-0x42A0000 - 0x42A03FF Spy Buffer AFE4 data6
-0x42B0000 - 0x42B03FF Spy Buffer AFE4 data7
-0x42C0000 - 0x42C03FF Spy Buffer AFE4 frame
-0x42D0000 - 0x42D03FF Spy Buffer for Timestamp (64-bit)
+AFE Spy Buffers are 14 bits wide and are read-only:
+
+0x40000000 - 0x400003FF Spy Buffer AFE0 data0 
+0x40010000 - 0x400103FF Spy Buffer AFE0 data1
+0x40020000 - 0x400203FF Spy Buffer AFE0 data2
+0x40030000 - 0x400303FF Spy Buffer AFE0 data3
+0x40040000 - 0x400403FF Spy Buffer AFE0 data4
+0x40050000 - 0x400503FF Spy Buffer AFE0 data5
+0x40060000 - 0x400603FF Spy Buffer AFE0 data6
+0x40070000 - 0x400703FF Spy Buffer AFE0 data7
+0x40080000 - 0x400803FF Spy Buffer AFE0 frame
+0x40090000 - 0x400903FF Spy Buffer AFE1 data0
+0x400A0000 - 0x400A03FF Spy Buffer AFE1 data1
+0x400B0000 - 0x400B03FF Spy Buffer AFE1 data2
+0x400C0000 - 0x400C03FF Spy Buffer AFE1 data3
+0x400D0000 - 0x400D03FF Spy Buffer AFE1 data4
+0x400E0000 - 0x400E03FF Spy Buffer AFE1 data5
+0x400F0000 - 0x400F03FF Spy Buffer AFE1 data6
+0x40100000 - 0x401003FF Spy Buffer AFE1 data7
+0x40110000 - 0x401103FF Spy Buffer AFE1 frame
+0x40120000 - 0x401203FF Spy Buffer AFE2 data0
+0x40130000 - 0x401303FF Spy Buffer AFE2 data1
+0x40140000 - 0x401403FF Spy Buffer AFE2 data2
+0x40150000 - 0x401503FF Spy Buffer AFE2 data3
+0x40160000 - 0x401603FF Spy Buffer AFE2 data4
+0x40170000 - 0x401703FF Spy Buffer AFE2 data5
+0x40180000 - 0x401803FF Spy Buffer AFE2 data6
+0x40190000 - 0x401903FF Spy Buffer AFE2 data7
+0x401A0000 - 0x401A03FF Spy Buffer AFE2 frame
+0x401B0000 - 0x401B03FF Spy Buffer AFE3 data0
+0x401C0000 - 0x401C03FF Spy Buffer AFE3 data1
+0x401D0000 - 0x401D03FF Spy Buffer AFE3 data2
+0x401E0000 - 0x401E03FF Spy Buffer AFE3 data3
+0x401F0000 - 0x401F03FF Spy Buffer AFE3 data4
+0x40200000 - 0x402003FF Spy Buffer AFE3 data5
+0x40210000 - 0x402103FF Spy Buffer AFE3 data6
+0x40220000 - 0x402203FF Spy Buffer AFE3 data7
+0x40230000 - 0x402303FF Spy Buffer AFE3 frame
+0x40240000 - 0x402403FF Spy Buffer AFE4 data0
+0x40250000 - 0x402503FF Spy Buffer AFE4 data1
+0x40260000 - 0x402603FF Spy Buffer AFE4 data2
+0x40270000 - 0x402703FF Spy Buffer AFE4 data3
+0x40280000 - 0x402803FF Spy Buffer AFE4 data4
+0x40290000 - 0x402903FF Spy Buffer AFE4 data5
+0x402A0000 - 0x402A03FF Spy Buffer AFE4 data6
+0x402B0000 - 0x402B03FF Spy Buffer AFE4 data7
+0x402C0000 - 0x402C03FF Spy Buffer AFE4 frame
+
+The Timestamp counter is also stored in a Spy buffer
+this is 64 bits wide and is read only.
+
+0x402D0000 - 0x402D03FF Spy Buffer for Timestamp
 ```
 ### Manual Alignment Procedure
 

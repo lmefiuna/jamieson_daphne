@@ -22,8 +22,9 @@ port(
     fclkb:      in std_logic;  -- inverted copy of fast 7 x clock
     reset:      in std_logic;  -- async reset
     bitslip:    in std_logic;  -- sync to mclk
-    delay_we:   in std_logic;                     -- async write strobe
-    delay_di:   in std_logic_vector(4 downto 0);  -- async load delay value
+    delay_clk:  in std_logic;                     -- clock for loading idelay value
+    delay_ld:   in std_logic;                     -- sync delay load
+    delay_dat:  in std_logic_vector(4 downto 0);  -- sync delay value (range 0 to 31)
     q:          out std_logic_vector(13 downto 0) -- aligned data
   );
 end febit;
@@ -65,14 +66,14 @@ begin
     port map(
         CNTVALUEOUT => open,  -- delay readback not implemented yet
         DATAOUT     => din_delayed,
-        C           => mclk,
+        C           => delay_clk,
         CE          => '0',
         CINVCTRL    => '0',
-        CNTVALUEIN  => delay_di,
+        CNTVALUEIN  => delay_dat,
         DATAIN      => '0', 
         IDATAIN     => din_ibuf,
         INC         => '0', 
-        LD          => delay_we,
+        LD          => delay_ld,
         LDPIPEEN    => '0',
         REGRST      => '0' -- no reset on this primitive
     );

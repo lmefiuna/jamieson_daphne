@@ -60,8 +60,10 @@ port(
 
     -- consider these signals slow and async, asserted for "a couple" mclk cycles
     bitslip:  in  std_logic_vector(44 downto 0); -- bitslip strobe
-    delay_we: in  std_logic_vector(44 downto 0); -- write delay value strobe
-    delay_di: in  std_logic_vector(4 downto 0);  -- delay value to write
+
+    delay_clk: in std_logic; -- clock for writing iserdes delay value
+    delay_ld:  in  std_logic_vector(44 downto 0); -- write delay value strobe
+    delay_dat: in  std_logic_vector(4 downto 0);  -- delay value to write range 0-31
 
     afe: out array45x14_type
 
@@ -78,18 +80,16 @@ architecture fe_arch of fe is
         fclkb:    in std_logic;
         reset:    in std_logic; -- async reset
         bitslip:  in std_logic;
-        delay_we: in std_logic;
-        delay_di: in std_logic_vector(4 downto 0);
+        delay_clk: in std_logic;
+        delay_ld:  in std_logic;
+        delay_dat: in std_logic_vector(4 downto 0);
         q:        out std_logic_vector(13 downto 0)
       );
     end component;
 
     signal clock_out_temp: std_logic;
     signal bitslip_tmp: std_logic_vector(44 downto 0);
-
-    signal delay_di_reg : std_logic_vector(4 downto 0);
     signal bitslip1_reg, bitslip0_reg: std_logic_vector(44 downto 0);
-    signal delay_we_reg : std_logic_vector(44 downto 0); 
 
 begin
 
@@ -126,8 +126,6 @@ begin
         if rising_edge(mclk) then
             bitslip0_reg(44 downto 0) <= bitslip;
             bitslip1_reg(44 downto 0) <= bitslip0_reg;
-            delay_we_reg(44 downto 0) <= delay_we;
-            delay_di_reg   <= delay_di;
         end if;
     end process;
 
@@ -147,9 +145,12 @@ begin
             fclkb    => fclkb,
             reset    => reset, -- async reset
             bitslip  => bitslip_tmp(i),
-            delay_we => delay_we_reg(i),
-            delay_di => delay_di_reg,
-            q        => afe(i) 
+
+            delay_clk => delay_clk,
+            delay_ld  => delay_ld(i),
+            delay_dat => delay_dat,
+
+            q         => afe(i) 
           );
 
     end generate;
