@@ -196,8 +196,9 @@ architecture top_level_arch of top_level is
         sclk:   in std_logic; -- 200MHz system clock, constant, 
         reset:  in std_logic;  
         delay_clk: in std_logic;
-        delay_dat: in std_logic_vector(4 downto 0);
+        delay_din: in std_logic_vector(4 downto 0);
         delay_ld:  in std_logic_vector(44 downto 0);
+        delay_dout: out array45x5_type;
         bitslip: in std_logic_vector(44 downto 0);
         afe: out array45x14_type
       );
@@ -265,6 +266,8 @@ architecture top_level_arch of top_level is
     signal rx_wren_reg: std_logic_vector(2 downto 0);
     signal bs_edge1_reg, bs_edge0_reg: std_logic;
     signal trig_gbe0_reg, trig_gbe1_reg, trig_gbe2_reg: std_logic;
+
+    signal delay_dout: array45x5_type;
 
 begin
 
@@ -455,8 +458,9 @@ begin
         reset => reset_async,
 
         delay_clk => oeiclk,
-        delay_dat => rx_data(4 downto 0),
+        delay_din => rx_data(4 downto 0),
         delay_ld  => delay_ld(44 downto 0),
+        delay_dout => delay_dout,
 
         bitslip   => bitslip(44 downto 0),
 
@@ -655,6 +659,7 @@ begin
                (X"00000000deadbeef")           when std_match(rx_addr_reg, DEADBEEF_ADDR) else
                (X"0000000"&bram0_do)           when std_match(rx_addr_reg, BRAM0_ADDR) else
                (X"000000000"&version)          when std_match(rx_addr_reg, GITVER_ADDR) else  -- 28 bit GIT commit hash
+
                (X"000000000000" & spyout( 0))  when std_match(rx_addr_reg, SPYBUF00_BASEADDR) else
                (X"000000000000" & spyout( 1))  when std_match(rx_addr_reg, SPYBUF01_BASEADDR) else
                (X"000000000000" & spyout( 2))  when std_match(rx_addr_reg, SPYBUF02_BASEADDR) else
@@ -700,6 +705,53 @@ begin
                (X"000000000000" & spyout(42))  when std_match(rx_addr_reg, SPYBUF42_BASEADDR) else
                (X"000000000000" & spyout(43))  when std_match(rx_addr_reg, SPYBUF43_BASEADDR) else
                (X"000000000000" & spyout(44))  when std_match(rx_addr_reg, SPYBUF44_BASEADDR) else
+
+               (X"00000000000000" & "000" & delay_dout( 0)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+ 0)) else
+               (X"00000000000000" & "000" & delay_dout( 1)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+ 1)) else
+               (X"00000000000000" & "000" & delay_dout( 2)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+ 2)) else
+               (X"00000000000000" & "000" & delay_dout( 3)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+ 3)) else
+               (X"00000000000000" & "000" & delay_dout( 4)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+ 4)) else
+               (X"00000000000000" & "000" & delay_dout( 5)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+ 5)) else
+               (X"00000000000000" & "000" & delay_dout( 6)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+ 6)) else
+               (X"00000000000000" & "000" & delay_dout( 7)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+ 7)) else
+               (X"00000000000000" & "000" & delay_dout( 8)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+ 8)) else
+               (X"00000000000000" & "000" & delay_dout( 9)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+ 9)) else
+               (X"00000000000000" & "000" & delay_dout(10)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+10)) else
+               (X"00000000000000" & "000" & delay_dout(11)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+11)) else
+               (X"00000000000000" & "000" & delay_dout(12)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+12)) else
+               (X"00000000000000" & "000" & delay_dout(13)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+13)) else
+               (X"00000000000000" & "000" & delay_dout(14)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+14)) else
+               (X"00000000000000" & "000" & delay_dout(15)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+15)) else
+               (X"00000000000000" & "000" & delay_dout(16)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+16)) else
+               (X"00000000000000" & "000" & delay_dout(17)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+17)) else
+               (X"00000000000000" & "000" & delay_dout(18)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+18)) else
+               (X"00000000000000" & "000" & delay_dout(19)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+19)) else
+               (X"00000000000000" & "000" & delay_dout(20)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+20)) else
+               (X"00000000000000" & "000" & delay_dout(21)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+21)) else
+               (X"00000000000000" & "000" & delay_dout(22)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+22)) else
+               (X"00000000000000" & "000" & delay_dout(23)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+23)) else
+               (X"00000000000000" & "000" & delay_dout(24)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+24)) else
+               (X"00000000000000" & "000" & delay_dout(25)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+25)) else
+               (X"00000000000000" & "000" & delay_dout(26)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+26)) else
+               (X"00000000000000" & "000" & delay_dout(27)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+27)) else
+               (X"00000000000000" & "000" & delay_dout(28)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+28)) else
+               (X"00000000000000" & "000" & delay_dout(29)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+29)) else
+               (X"00000000000000" & "000" & delay_dout(30)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+30)) else
+               (X"00000000000000" & "000" & delay_dout(31)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+31)) else
+               (X"00000000000000" & "000" & delay_dout(32)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+32)) else
+               (X"00000000000000" & "000" & delay_dout(33)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+33)) else
+               (X"00000000000000" & "000" & delay_dout(34)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+34)) else
+               (X"00000000000000" & "000" & delay_dout(35)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+35)) else
+               (X"00000000000000" & "000" & delay_dout(36)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+36)) else
+               (X"00000000000000" & "000" & delay_dout(37)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+37)) else
+               (X"00000000000000" & "000" & delay_dout(38)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+38)) else
+               (X"00000000000000" & "000" & delay_dout(39)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+39)) else
+               (X"00000000000000" & "000" & delay_dout(40)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+40)) else
+               (X"00000000000000" & "000" & delay_dout(41)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+41)) else
+               (X"00000000000000" & "000" & delay_dout(42)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+42)) else
+               (X"00000000000000" & "000" & delay_dout(43)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+43)) else
+               (X"00000000000000" & "000" & delay_dout(44)) when (rx_addr_reg = std_logic_vector(unsigned(DELAY_BASEADDR)+44)) else
+
                timestamp_spy_out(63 downto 0)  when std_match(rx_addr_reg, SPYBUFTS_BASEADDR) else
                (X"00000000" & rx_addr_reg);
 

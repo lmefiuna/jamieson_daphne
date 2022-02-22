@@ -63,7 +63,8 @@ port(
 
     delay_clk: in std_logic; -- clock for writing iserdes delay value
     delay_ld:  in  std_logic_vector(44 downto 0); -- write delay value strobe
-    delay_dat: in  std_logic_vector(4 downto 0);  -- delay value to write range 0-31
+    delay_din: in  std_logic_vector(4 downto 0);  -- delay value to write range 0-31
+    delay_dout: out array45x5_type; -- delay value readback values
 
     afe: out array45x14_type
 
@@ -82,7 +83,8 @@ architecture fe_arch of fe is
         bitslip:  in std_logic;
         delay_clk: in std_logic;
         delay_ld:  in std_logic;
-        delay_dat: in std_logic_vector(4 downto 0);
+        delay_din: in std_logic_vector(4 downto 0);
+        delay_dout: out std_logic_vector(4 downto 0);
         q:        out std_logic_vector(13 downto 0)
       );
     end component;
@@ -148,7 +150,8 @@ begin
 
             delay_clk => delay_clk,
             delay_ld  => delay_ld(i),
-            delay_dat => delay_dat,
+            delay_din => delay_din,
+            delay_dout => delay_dout(i),
 
             q         => afe(i) 
           );

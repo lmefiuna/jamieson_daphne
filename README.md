@@ -112,51 +112,51 @@ The memory map is defined in daphne_package.vhd and the address space is 32 bit.
 0x302B 			   Write anything to BITSLIP AFE4 data7
 0x302C 			   Write anything to BITSLIP AFE4 frame
 
-0x4000 			   Write fine delay value for AFE0 data0, W/O range 0-31 (5 bit)
-0x4001 			   Write fine delay value for AFE0 data1
-0x4002 			   Write fine delay value for AFE0 data2
-0x4003 			   Write fine delay value for AFE0 data3
-0x4004 			   Write fine delay value for AFE0 data4
-0x4005 			   Write fine delay value for AFE0 data5
-0x4006 			   Write fine delay value for AFE0 data6
-0x4007 			   Write fine delay value for AFE0 data7
-0x4008 			   Write fine delay value for AFE0 frame
-0x4009 			   Write fine delay value for AFE1 data0
-0x400A 			   Write fine delay value for AFE1 data1
-0x400B 			   Write fine delay value for AFE1 data2
-0x400C 			   Write fine delay value for AFE1 data3
-0x400D 			   Write fine delay value for AFE1 data4
-0x400E 			   Write fine delay value for AFE1 data5
-0x400F 			   Write fine delay value for AFE1 data6
-0x4010 			   Write fine delay value for AFE1 data7
-0x4011 			   Write fine delay value for AFE1 frame
-0x4012 			   Write fine delay value for AFE2 data0
-0x4013 			   Write fine delay value for AFE2 data1
-0x4014 			   Write fine delay value for AFE2 data2
-0x4015 			   Write fine delay value for AFE2 data3
-0x4016 			   Write fine delay value for AFE2 data4
-0x4017 			   Write fine delay value for AFE2 data5
-0x4018 			   Write fine delay value for AFE2 data6
-0x4019 			   Write fine delay value for AFE2 data7
-0x401A 			   Write fine delay value for AFE2 frame
-0x401B 			   Write fine delay value for AFE3 data0
-0x401C 			   Write fine delay value for AFE3 data1
-0x401D 			   Write fine delay value for AFE3 data2
-0x401E 			   Write fine delay value for AFE3 data3
-0x401F 			   Write fine delay value for AFE3 data4
-0x4020 			   Write fine delay value for AFE3 data5
-0x4021 			   Write fine delay value for AFE3 data6
-0x4022 			   Write fine delay value for AFE3 data7
-0x4023 			   Write fine delay value for AFE3 frame
-0x4024 			   Write fine delay value for AFE4 data0
-0x4025 			   Write fine delay value for AFE4 data1
-0x4026 			   Write fine delay value for AFE4 data2
-0x4027 			   Write fine delay value for AFE4 data3
-0x4028 			   Write fine delay value for AFE4 data4
-0x4029 			   Write fine delay value for AFE4 data5
-0x402A 			   Write fine delay value for AFE4 data6
-0x402B 			   Write fine delay value for AFE4 data7
-0x402C 			   Write fine delay value for AFE4 frame
+0x4000 			   fine delay value for AFE0 data0, read-write, range 0-31 (5 bit)
+0x4001 			   fine delay value for AFE0 data1
+0x4002 			   fine delay value for AFE0 data2
+0x4003 			   fine delay value for AFE0 data3
+0x4004 			   fine delay value for AFE0 data4
+0x4005 			   fine delay value for AFE0 data5
+0x4006 			   fine delay value for AFE0 data6
+0x4007 			   fine delay value for AFE0 data7
+0x4008 			   fine delay value for AFE0 frame
+0x4009 			   fine delay value for AFE1 data0
+0x400A 			   fine delay value for AFE1 data1
+0x400B 			   fine delay value for AFE1 data2
+0x400C 			   fine delay value for AFE1 data3
+0x400D 			   fine delay value for AFE1 data4
+0x400E 			   fine delay value for AFE1 data5
+0x400F 			   fine delay value for AFE1 data6
+0x4010 			   fine delay value for AFE1 data7
+0x4011 			   fine delay value for AFE1 frame
+0x4012 			   fine delay value for AFE2 data0
+0x4013 			   fine delay value for AFE2 data1
+0x4014 			   fine delay value for AFE2 data2
+0x4015 			   fine delay value for AFE2 data3
+0x4016 			   fine delay value for AFE2 data4
+0x4017 			   fine delay value for AFE2 data5
+0x4018 			   fine delay value for AFE2 data6
+0x4019 			   fine delay value for AFE2 data7
+0x401A 			   fine delay value for AFE2 frame
+0x401B 			   fine delay value for AFE3 data0
+0x401C 			   fine delay value for AFE3 data1
+0x401D 			   fine delay value for AFE3 data2
+0x401E 			   fine delay value for AFE3 data3
+0x401F 			   fine delay value for AFE3 data4
+0x4020 			   fine delay value for AFE3 data5
+0x4021 			   fine delay value for AFE3 data6
+0x4022 			   fine delay value for AFE3 data7
+0x4023 			   fine delay value for AFE3 frame
+0x4024 			   fine delay value for AFE4 data0
+0x4025 			   fine delay value for AFE4 data1
+0x4026 			   fine delay value for AFE4 data2
+0x4027 			   fine delay value for AFE4 data3
+0x4028 			   fine delay value for AFE4 data4
+0x4029 			   fine delay value for AFE4 data5
+0x402A 			   fine delay value for AFE4 data6
+0x402B 			   fine delay value for AFE4 data7
+0x402C 			   fine delay value for AFE4 frame
 
 AFE Spy Buffers are 14 bits wide and are read-only:
 

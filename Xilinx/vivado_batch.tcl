@@ -111,7 +111,7 @@ report_io -file $outputDir/io.rpt
 
 # generate bitstream...
 
-write_bitstream -force $outputDir/pulsar2b_oei_test.bit
+write_bitstream -force $outputDir/daphne_$git_sha.bit
 
 # write out ILA debug probes file
 # write_debug_probes -force $outputDir/probes.ltx

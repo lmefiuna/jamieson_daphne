@@ -24,7 +24,8 @@ port(
     bitslip:    in std_logic;  -- sync to mclk
     delay_clk:  in std_logic;                     -- clock for loading idelay value
     delay_ld:   in std_logic;                     -- sync delay load
-    delay_dat:  in std_logic_vector(4 downto 0);  -- sync delay value (range 0 to 31)
+    delay_din:  in std_logic_vector(4 downto 0);  -- sync delay value (range 0 to 31)
+    delay_dout: out std_logic_vector(4 downto 0);
     q:          out std_logic_vector(13 downto 0) -- aligned data
   );
 end febit;
@@ -33,8 +34,7 @@ architecture febit_arch of febit is
 
     signal din_ibuf, din_delayed : std_logic;
     signal icascade1, icascade2 : std_logic;
-    signal delay_reg : std_logic_vector(4 downto 0);
-
+    
 begin
 
     -- LVDS input buffer with internal termination
@@ -51,17 +51,6 @@ begin
         O  => din_ibuf
     );
 
-    -- try this: register the delay value and then always try to load this register into idelay...
-
-    delay_proc: process(delay_clk)
-    begin
-        if rising_edge(delay_clk) then
-            if (delay_ld='1') then
-                delay_reg <= delay_dat;
-            end if;
-        end if;
-    end process delay_proc;
-
     -- adjustable input delay 2.5ns in 32 78ps steps
 
     IDELAYE2_inst: IDELAYE2
@@ -69,23 +58,23 @@ begin
         CINVCTRL_SEL          => "FALSE",
         DELAY_SRC             => "IDATAIN",
         HIGH_PERFORMANCE_MODE => "TRUE",
-        IDELAY_TYPE           => "VAR_LOAD",
+        IDELAY_TYPE           => "VAR_LOAD", -- simple parallel load mode 
         IDELAY_VALUE          => 0,
         PIPE_SEL              => "FALSE",
         REFCLK_FREQUENCY      => 200.0,   -- 200 MHz
         SIGNAL_PATTERN        => "DATA"
     )
     port map(
-        CNTVALUEOUT => open,  -- delay readback not implemented yet
+        CNTVALUEOUT => delay_dout,
         DATAOUT     => din_delayed,
         C           => delay_clk,
         CE          => '0',
         CINVCTRL    => '0',
-        CNTVALUEIN  => delay_reg,
+        CNTVALUEIN  => delay_din,
         DATAIN      => '0', 
         IDATAIN     => din_ibuf,
         INC         => '0', 
-        LD          => '1',  -- always load delay value from ext register
+        LD          => delay_ld,
         LDPIPEEN    => '0',
         REGRST      => '0' -- no reset on this primitive
     );
