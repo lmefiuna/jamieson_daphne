@@ -30,6 +30,10 @@ package daphne_package is
 
     constant TRIGGER_ADDR:      std_logic_vector(31 downto 0) := X"00002000";
 
+    -- address to force reset of the AFE front end logic
+
+    constant RESETFE_ADDR:    std_logic_vector(31 downto 0) := X"00002001";
+
     -- 45 addresses write anything to this address to bitslip AFE channel 0x3000 - 0x302C
 
     constant BITSLIP_BASEADDR:  std_logic_vector(31 downto 0) := X"00003000";

@@ -20,7 +20,7 @@ port(
     mclk:       in std_logic;  -- master clock 62.5MHz
     fclk:       in std_logic;  -- 7 x clock = 437.5MHz, from internal PLL, not from IOB
     fclkb:      in std_logic;  -- inverted copy of fast 7 x clock
-    reset:      in std_logic;  -- async reset
+    reset:      in std_logic;  -- sync to mclk
     bitslip:    in std_logic;  -- sync to mclk
     delay_clk:  in std_logic;                     -- clock for loading idelay value
     delay_ld:   in std_logic;                     -- sync delay load
@@ -76,7 +76,7 @@ begin
         INC         => '0', 
         LD          => delay_ld,
         LDPIPEEN    => '0',
-        REGRST      => '0' -- no reset on this primitive
+        REGRST      => '0' -- no reset on this primitive (but there IS a reset on the controller!)
     );
 
     -- master/slave cascaded pair of ISERDES serial-to-parallel converters, inspired by selectio_wiz 
@@ -104,7 +104,7 @@ begin
         Q8                => q(7),
         SHIFTOUT1         => icascade1,        -- connection to slave
         SHIFTOUT2         => icascade2,
-        BITSLIP           => bitslip,
+        BITSLIP           => bitslip,          -- sync to MCLK
         CE1               => '1',              -- clock always enabled
         CE2               => '1', 
         CLK               => fclk,           -- fast bit clock
@@ -113,7 +113,7 @@ begin
         CLKDIVP           => '0',              -- not used tie low
         D                 => '0',              -- from iob, not used
         DDLY              => din_delayed,      -- from idelay use this one
-        RST               => reset,            
+        RST               => reset,            -- sync to MCLK
         SHIFTIN1          => '0',
         SHIFTIN2          => '0',
         DYNCLKDIVSEL      => '0',
@@ -149,7 +149,7 @@ begin
         SHIFTOUT2         => open,
         SHIFTIN1          => icascade1, -- from master
         SHIFTIN2          => icascade2,
-        BITSLIP           => bitslip,
+        BITSLIP           => bitslip,   -- sync to MCLK
         CE1               => '1',       -- always clock enable
         CE2               => '1',      
         CLK               => fclk,    -- fast bit clock
@@ -158,7 +158,7 @@ begin
         CLKDIVP           => '0',       -- tie low
         D                 => '0',       -- not used on slave
         DDLY              => '0',       -- not used on slave
-        RST               => reset,   
+        RST               => reset,     -- sync to MCLK
         DYNCLKDIVSEL      => '0',
         DYNCLKSEL         => '0',
         OFB               => '0',

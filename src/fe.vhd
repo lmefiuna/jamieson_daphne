@@ -56,10 +56,8 @@ port(
     fclk:   in std_logic; -- 7 x master clock = 437.5MHz
     fclkb:  in std_logic;
     sclk:   in std_logic; -- 200MHz system clock, constant, 
-    reset:  in std_logic; -- async reset 
-
-    -- consider these signals slow and async, asserted for "a couple" mclk cycles
-    bitslip:  in  std_logic_vector(44 downto 0); -- bitslip strobe
+    reset:  in std_logic; -- async reset the front end logic (must do this before use!)
+    bitslip:  in  std_logic_vector(44 downto 0); -- bitslip sync to MCLK, assert for only 1 clock cycle at a time
 
     delay_clk: in std_logic; -- clock for writing iserdes delay value
     delay_ld:  in  std_logic_vector(44 downto 0); -- write delay value strobe
@@ -79,8 +77,8 @@ architecture fe_arch of fe is
         mclk:     in std_logic;
         fclk:     in std_logic;
         fclkb:    in std_logic;
-        reset:    in std_logic; -- async reset
-        bitslip:  in std_logic;
+        reset:    in std_logic; -- sync to MCLK
+        bitslip:  in std_logic; -- sync to MCLK
         delay_clk: in std_logic;
         delay_ld:  in std_logic;
         delay_din: in std_logic_vector(4 downto 0);
@@ -90,8 +88,8 @@ architecture fe_arch of fe is
     end component;
 
     signal clock_out_temp: std_logic;
-    signal bitslip_tmp: std_logic_vector(44 downto 0);
-    signal bitslip1_reg, bitslip0_reg: std_logic_vector(44 downto 0);
+    signal rst_reg: std_logic_vector(15 downto 0);
+    signal idelayctrl_rst_reg, mrst_reg: std_logic;
 
 begin
 
@@ -105,8 +103,8 @@ begin
         CE => '1',
         D1 => '1',
         D2 => '0',
-        R => '0',
-        S => '0');
+        R  => '0',
+        S  => '0');
 
     OBUFDS_inst: OBUFDS
         generic map(IOSTANDARD=>"LVDS")
@@ -115,28 +113,41 @@ begin
             O => afe_clk_p,
             OB => afe_clk_n);
 
+    -- make the special reset pulse for the IDELAYCTRL module. needs to be minimum 59.28ns minimum
+
+    rst_proc: process(sclk)
+    begin
+        if rising_edge(sclk) then -- sampling @ 200MHz
+            rst_reg <= rst_reg(14 downto 0) & reset;
+            if (rst_reg = X"0000") then
+                idelayctrl_rst_reg <= '0';
+            else
+                idelayctrl_rst_reg <= '1';  -- high for 80ns
+            end if;
+        end if;
+    end process rst_proc;
+    
     -- this controller is required for calibrating IDELAY elements...
 
     IDELAYCTRL_inst: IDELAYCTRL
         port map(
             REFCLK => sclk,
-            RST    => reset,
+            RST    => idelayctrl_rst_reg, -- minimum pulse width is 60ns! MUST pulse this before using idelay!
             RDY    => open);
 
-    process(mclk)
+    -- the reset pulse sent to febit should be sync to mclk, square that up here
+    -- used by iserdes modules, not used by iserdes
+
+    mreset_proc: process(mclk)
     begin
         if rising_edge(mclk) then
-            bitslip0_reg(44 downto 0) <= bitslip;
-            bitslip1_reg(44 downto 0) <= bitslip0_reg;
+            mrst_reg <= idelayctrl_rst_reg;
         end if;
-    end process;
-
+    end process mreset_proc;
 
     -- instantiate 45 x single bit FEBIT modules
 
     gen_febit: for i in 44 downto 0 generate
-
-        bitslip_tmp(i) <= '1' when (bitslip0_reg(i)='1' and bitslip1_reg(i)='0') else '0';
 
         febit_inst: febit
         port map(
@@ -145,8 +156,8 @@ begin
             mclk     => mclk,
             fclk     => fclk,
             fclkb    => fclkb,
-            reset    => reset, -- async reset
-            bitslip  => bitslip_tmp(i),
+            reset    => mrst_reg,
+            bitslip  => bitslip(i),
 
             delay_clk => delay_clk,
             delay_ld  => delay_ld(i),

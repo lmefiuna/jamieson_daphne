@@ -66,6 +66,8 @@ The memory map is defined in daphne_package.vhd and the address space is 32 bit.
 
 0x2000             Write anything to trigger spy buffers, W/O
 
+0x2001             Write anything to reset the AFE front end logic, need to do this first!
+
 0x3000 			   Write anything to BITSLIP AFE0 data0, W/O
 0x3001 			   Write anything to BITSLIP AFE0 data1
 0x3002 			   Write anything to BITSLIP AFE0 data2

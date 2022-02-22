@@ -263,11 +263,13 @@ architecture top_level_arch of top_level is
     
     signal timestamp_reg, timestamp_spy_out: std_logic_vector(63 downto 0);
 
-    signal rx_wren_reg: std_logic_vector(2 downto 0);
-    signal bs_edge1_reg, bs_edge0_reg: std_logic;
     signal trig_gbe0_reg, trig_gbe1_reg, trig_gbe2_reg: std_logic;
 
+    signal bitslip_tmp, bitslip3_oei_reg, bitslip2_oei_reg, bitslip1_oei_reg, bitslip0_oei_reg: std_logic_vector(44 downto 0);
+    signal bitslip0_mclk_reg, bitslip1_mclk_reg, bitslip_mclk: std_logic_vector(44 downto 0);  
+
     signal delay_dout: array45x5_type;
+    signal fe_reset: std_logic;
 
 begin
 
@@ -441,6 +443,57 @@ begin
     afe_p(43) <= AFE4_D7_P;  afe_n(43) <= AFE4_D7_N;
     afe_p(44) <= AFE4_FR_P;  afe_n(44) <= AFE4_FR_N;
 
+
+    -- write anything to address RESETFE_ADDR to generate a special reset pulse for the FE logic
+    -- one must do this before using the FE
+
+    fe_reset <= '1' when (std_match(rx_addr,RESETFE_ADDR) and rx_wren='1') else '0';
+
+    -- address decode idelay load pulse
+    -- this signal originates in oeiclk domain (125MHz) and uses this clock to store value in idelay
+    -- note this value range 0-31 and is write only for now, readback is not implemented.
+
+    dewe_gen: for i in 44 downto 0 generate
+
+        delay_ld(i) <= '1' when (rx_wren='1' and (rx_addr=std_logic_vector(unsigned(DELAY_BASEADDR) + i)) ) else '0';
+
+    end generate dewe_gen;
+
+    -- address decode bitslip
+    -- this signal originates in the oeiclk domain (125MHz) but must be resync in the in MCLK domain (62.5MHz) *AND* 
+    -- it must be asserted for only ONE MCLK cycle. the oeiclk domain is faster, so pulse stretch
+    -- it for 3 cycles, then edge detect this signal in the MCLK domain and assert this for one MCLK cycle.
+
+    bs0_gen: for i in 44 downto 0 generate
+
+        bitslip_tmp(i) <= '1' when ( rx_wren='1' and (rx_addr=std_logic_vector(unsigned(BITSLIP_BASEADDR) + i)) ) else '0';
+
+    end generate bs0_gen;
+
+    bs_oei_proc: process(oeiclk) -- 125MHz domain
+    begin
+        if rising_edge(oeiclk) then
+            bitslip0_oei_reg <= bitslip_tmp;
+            bitslip1_oei_reg <= bitslip0_oei_reg;
+            bitslip2_oei_reg <= bitslip1_oei_reg;
+            bitslip3_oei_reg <= bitslip2_oei_reg or bitslip1_oei_reg or bitslip0_oei_reg; -- will be high for minimum 3 oei clks
+        end if;
+    end process bs_oei_proc;
+
+    bs_mclk_proc: process(mclk) -- 62.5MHz
+    begin
+        if rising_edge(mclk) then
+            bitslip0_mclk_reg <= bitslip3_oei_reg; 
+            bitslip1_mclk_reg <= bitslip0_mclk_reg;
+        end if;
+    end process bs_mclk_proc;
+
+    bs1_gen: for i in 44 downto 0 generate
+
+        bitslip_mclk(i) <= '1' when ( bitslip1_mclk_reg(i)='0' and bitslip0_mclk_reg(i)='1' ) else '0';
+
+    end generate bs1_gen;
+
     -- now instantiate the AFE front end, total 45 channels (40 AFE data channels + 5 frame marker channels)
 
     fe_inst: fe 
@@ -455,14 +508,14 @@ begin
         fclk  => fclk,
         fclkb => fclkb,
         sclk  => sclk,
-        reset => reset_async,
+        reset => fe_reset,
 
         delay_clk => oeiclk,
         delay_din => rx_data(4 downto 0),
         delay_ld  => delay_ld(44 downto 0),
         delay_dout => delay_dout,
 
-        bitslip   => bitslip(44 downto 0),
+        bitslip   => bitslip_mclk(44 downto 0),
 
         afe => afe_bus -- mclk domain, this bus is 45x14
     );
@@ -474,49 +527,6 @@ begin
         afe16_bus(i) <= "00" & afe_bus(i);
 
     end generate afegen;
-
-    -- address decode idelay load pulse
-    -- this signal originates in oeiclk domain (125MHz) and uses this clock to store value in idelay
-    -- note this value range 0-31 and is write only for now, readback is not implemented.
-
-    dewe_gen: for i in 44 downto 0 generate
-
-        delay_ld(i) <= '1' when (rx_wren='1' and (rx_addr=std_logic_vector(unsigned(DELAY_BASEADDR) + i)) ) else '0';
-
-    end generate dewe_gen;
-
-    -- address decode bitslip
-    -- this signal originates in the oeiclk domain (125MHz) but must be resync in the in MCLK domain (62.5MHz)
-    -- it must be asserted for only ONE MCLK cycle. the oeiclk domain write enable (rx_wren) is fast, so pulse stretch
-    -- it for a few cycles, then edge detect this signal in the MCLK domain and assert this for one MCLK cycle.
-
-    we_proc: process(oeiclk)
-    begin
-        if rising_edge(oeiclk) then
-            rx_wren_reg(0) <= rx_wren;
-            rx_wren_reg(1) <= rx_wren_reg(0);
-            rx_wren_reg(2) <= rx_wren_reg(1) or rx_wren_reg(0);
-        end if;
-    end process we_proc;
-
-    bsedge_proc: process(mclk)
-    begin
-        if rising_edge(mclk) then
-            bs_edge0_reg <= rx_wren_reg(2);
-            bs_edge1_reg <= bs_edge0_reg;
-            if (bs_edge0_reg='1' and bs_edge1_reg='0') then
-                bitslip_strobe <= '1';
-            else
-                bitslip_strobe <= '0';
-            end if;
-        end if;
-    end process bsedge_proc;
-
-    bs_gen: for i in 44 downto 0 generate
-
-        bitslip(i) <= '1' when ( bitslip_strobe='1' and (rx_addr=std_logic_vector(unsigned(BITSLIP_BASEADDR) + i)) ) else '0';
-
-    end generate bs_gen;
 
     -- make 45 spy buffers for AFE data, these buffers are READ ONLY
 
