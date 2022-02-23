@@ -199,6 +199,7 @@ architecture top_level_arch of top_level is
         delay_din: in std_logic_vector(4 downto 0);
         delay_ld:  in std_logic_vector(44 downto 0);
         delay_dout: out array45x5_type;
+        delay_rdy:  out std_logic;
         bitslip: in std_logic_vector(44 downto 0);
         afe: out array45x14_type
       );
@@ -270,6 +271,7 @@ architecture top_level_arch of top_level is
 
     signal delay_dout: array45x5_type;
     signal fe_reset: std_logic;
+    signal delay_rdy: std_logic;
 
 begin
 
@@ -514,6 +516,7 @@ begin
         delay_din => rx_data(4 downto 0),
         delay_ld  => delay_ld(44 downto 0),
         delay_dout => delay_dout,
+        delay_rdy  => delay_rdy,
 
         bitslip   => bitslip_mclk(44 downto 0),
 
@@ -665,7 +668,7 @@ begin
 
     tx_data <= test_reg                        when std_match(rx_addr_reg, TESTREG_ADDR) else 
                fifo_DO                         when std_match(rx_addr_reg, FIFO_ADDR) else 
-               (X"000000000000"&status_vector) when std_match(rx_addr_reg, STATVEC_ADDR) else
+               (X"00000000000" & "00" & locked & delay_rdy & status_vector) when std_match(rx_addr_reg, STATVEC_ADDR) else  -- the status register
                (X"00000000deadbeef")           when std_match(rx_addr_reg, DEADBEEF_ADDR) else
                (X"0000000"&bram0_do)           when std_match(rx_addr_reg, BRAM0_ADDR) else
                (X"000000000"&version)          when std_match(rx_addr_reg, GITVER_ADDR) else  -- 28 bit GIT commit hash

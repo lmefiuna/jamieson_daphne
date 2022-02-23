@@ -63,6 +63,7 @@ port(
     delay_ld:  in  std_logic_vector(44 downto 0); -- write delay value strobe
     delay_din: in  std_logic_vector(4 downto 0);  -- delay value to write range 0-31
     delay_dout: out array45x5_type; -- delay value readback values
+    delay_rdy: out std_logic;
 
     afe: out array45x14_type
 
@@ -133,7 +134,7 @@ begin
         port map(
             REFCLK => sclk,
             RST    => idelayctrl_rst_reg, -- minimum pulse width is 60ns! MUST pulse this before using idelay!
-            RDY    => open);
+            RDY    => delay_rdy);
 
     -- the reset pulse sent to febit should be sync to mclk, square that up here
     -- used by iserdes modules, not used by iserdes
