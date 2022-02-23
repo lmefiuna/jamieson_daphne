@@ -90,7 +90,7 @@ begin
         DYN_CLK_INV_EN    => "FALSE",
         NUM_CE            => 2,
         OFB_USED          => "FALSE",
-        IOBDELAY          => "NONE", 
+        IOBDELAY          => "BOTH", 
         SERDES_MODE       => "MASTER"
     )
     port map(
@@ -133,7 +133,7 @@ begin
         DYN_CLK_INV_EN    => "FALSE",
         NUM_CE            => 2,
         OFB_USED          => "FALSE",
-        IOBDELAY          => "NONE", 
+        IOBDELAY          => "BOTH", 
         SERDES_MODE       => "SLAVE"
     )
    port map(
