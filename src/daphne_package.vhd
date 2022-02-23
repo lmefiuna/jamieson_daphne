@@ -23,6 +23,8 @@ package daphne_package is
     type array45x14_type is array (44 downto 0) of std_logic_vector(13 downto 0);
     type array45x16_type is array (44 downto 0) of std_logic_vector(15 downto 0);
     type array45x5_type  is array (44 downto 0) of std_logic_vector(4 downto 0);
+    type array8x14_type  is array ( 7 downto 0) of std_logic_vector(13 downto 0);
+    type array5x8x14_type is array (4 downto 0) of array8x14_type;
 
     -- DAPHNE specific addresses
 
