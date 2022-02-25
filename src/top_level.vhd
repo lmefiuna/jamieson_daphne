@@ -149,7 +149,6 @@ architecture top_level_arch of top_level is
 
         mclk:    in std_logic; -- master clock 62.5MHz
         fclk:    in std_logic; -- 7 x master clock = 437.5MHz
-        fclkb:   in std_logic;
         bitslip: in std_logic_vector(4 downto 0);  -- sync to MCLK
         q:       out array_5x9x16_type
       );
@@ -203,8 +202,10 @@ architecture top_level_arch of top_level is
     signal trig_sync, trig_gbe: std_logic;
     signal trig_gbe0_reg, trig_gbe1_reg, trig_gbe2_reg: std_logic;
 
-    signal sysclk_ibuf, clkfbout, clkfbout_buf, clkout0, clkout1, clkout2, clkout2b, locked: std_logic;
-    signal sclk, mclk, fclk, fclkb: std_logic;
+    signal sysclk_ibuf, clkfbout, clkfbout_buf, clkout0, clkout1, clkout2, locked: std_logic;
+    signal sclk: std_logic;
+    signal mclk: std_logic;
+    signal fclk: std_logic;
 
     signal bitslip_tmp, bitslip3_oei_reg, bitslip2_oei_reg, bitslip1_oei_reg, bitslip0_oei_reg: std_logic_vector(4 downto 0);  
     signal bitslip0_mclk_reg, bitslip1_mclk_reg, bitslip_mclk: std_logic_vector(4 downto 0);  
@@ -248,7 +249,7 @@ begin
         CLKOUT1_DUTY_CYCLE   => 0.500,
         CLKOUT1_USE_FINE_PS  => FALSE,
         CLKOUT2_DIVIDE       => 2,
-        CLKOUT2_PHASE        => 90.000,  -- introduce 90 deg phase shift on the fast clocks (was 0.000)
+        CLKOUT2_PHASE        => 0.000,
         CLKOUT2_DUTY_CYCLE   => 0.500,
         CLKOUT2_USE_FINE_PS  => FALSE,
         CLKIN1_PERIOD        => 10.000
@@ -261,7 +262,7 @@ begin
         CLKOUT1             => clkout1,  -- 62.5MHz
         CLKOUT1B            => open,
         CLKOUT2             => clkout2,  -- 437.5MHz
-        CLKOUT2B            => clkout2b, -- 437.5MHz inverted 
+        CLKOUT2B            => open,     -- 437.5MHz inverted  (was clkout2b)
         CLKOUT3             => open,
         CLKOUT3B            => open,
         CLKOUT4             => open,
@@ -296,9 +297,7 @@ begin
     clk1_inst:  BUFG port map( I => clkout1, O => mclk);   -- master clock 62.5MHz
 
     clk2_inst:  BUFG port map( I => clkout2, O => fclk);   -- fast clock 437.5MHz
-
-    clk2b_inst: BUFG port map( I => clkout2b, O => fclkb); -- fast clock 437.5MHz inverted
-    
+  
     -- square up some async inputs in the mclk domain
     -- also make a fake 64 bit timestamp counter
 
@@ -399,7 +398,6 @@ begin
 
         mclk  => mclk,
         fclk  => fclk,
-        fclkb => fclkb,
         sclk  => sclk,
         reset => fe_reset,
 

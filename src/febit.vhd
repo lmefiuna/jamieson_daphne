@@ -19,7 +19,6 @@ port(
     din_p, din_n:  std_logic;  -- LVDS data input from AFE chip
     mclk:       in std_logic;  -- master clock 62.5MHz
     fclk:       in std_logic;  -- 7 x clock = 437.5MHz, from internal PLL, not from IOB
-    fclkb:      in std_logic;  -- inverted copy of fast 7 x clock
     reset:      in std_logic;  -- sync to mclk
     bitslip:    in std_logic;  -- sync to mclk
     delay_clk:  in std_logic;                     -- clock for loading idelay value
@@ -31,6 +30,7 @@ end febit;
 
 architecture febit_arch of febit is
 
+    signal fclkb: std_logic;
     signal din_ibuf, din_delayed : std_logic;
     signal icascade1, icascade2 : std_logic;
     
@@ -78,6 +78,8 @@ begin
         REGRST      => '0' -- no reset on this primitive (but there IS a reset on the controller!)
     );
 
+    fclkb <= not fclk;  -- LOCAL inversion on fast clock! Important! Don't use a separate BUFG net for this!
+
     -- master/slave cascaded pair of ISERDES serial-to-parallel converters, inspired by selectio_wiz 
 
     iserdese2_master_inst: ISERDESE2
@@ -89,7 +91,7 @@ begin
         DYN_CLK_INV_EN    => "FALSE",
         NUM_CE            => 2,
         OFB_USED          => "FALSE",
-        IOBDELAY          => "BOTH", 
+        IOBDELAY          => "IFD", 
         SERDES_MODE       => "MASTER"
     )
     port map(
@@ -132,7 +134,7 @@ begin
         DYN_CLK_INV_EN    => "FALSE",
         NUM_CE            => 2,
         OFB_USED          => "FALSE",
-        IOBDELAY          => "BOTH", 
+        IOBDELAY          => "IFD", 
         SERDES_MODE       => "SLAVE"
     )
    port map(

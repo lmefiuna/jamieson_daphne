@@ -54,7 +54,7 @@ port(
 
     mclk:   in std_logic; -- master clock 62.5MHz
     fclk:   in std_logic; -- 7 x master clock = 437.5MHz
-    fclkb:  in std_logic; 
+    -- fclkb:  in std_logic; 
     sclk:   in std_logic; -- 200MHz system clock, constant
     reset:  in std_logic; -- async reset the front end logic (must do this before use!)
     bitslip:  in  std_logic_vector(4 downto 0); -- bitslip sync to MCLK, assert for only 1 clock cycle at a time
@@ -75,7 +75,6 @@ architecture fe_arch of fe is
         din_n:      in std_logic;
         mclk:       in std_logic;
         fclk:       in std_logic;
-        fclkb:      in std_logic;
         reset:      in std_logic;
         bitslip:    in std_logic; -- sync to MCLK
         delay_clk:  in std_logic;
@@ -155,7 +154,6 @@ begin
                 din_n     => afe_n(a)(b),
                 mclk      => mclk,
                 fclk      => fclk,
-                fclkb     => fclkb,
                 reset     => reset_mclk_reg,
                 bitslip   => bitslip(a),
                 delay_clk => delay_clk,

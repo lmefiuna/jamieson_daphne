@@ -8,25 +8,23 @@ Originally this design used a 1000BASE-T Ethernet PHY chip located outside the F
 
 ## IP Cores
 
-This design uses the "Gigabit Ethernet PCS PMA" IP core from Xilinx. It is included in every Vivado build and is free to use. The build script pulls this core automatically from the XCIX file.
+This design uses the "Gigabit Ethernet PCS PMA" IP core from Xilinx. It is included in every Vivado build and is free to use. The build script pulls this core automatically from the included XCIX file.
 
 ## Hardware
 
-This demo design targets the XC7A200T-3FBG676C FPGA used on the DAPHNE board. Plug an SFP or SFP+ module into the SFP cage for DAQ1 and connect the other end to a GbE port in a switch or PC.
+This demo design targets the XC7A200T-2FBG676C FPGA used on the DAPHNE board. Plug an SFP or SFP+ module into the "SFP1" cage for DAQ1 and connect the other end to a GbE port in a switch or PC.
 
 In the FPGA there are some various registers and memories that are connected to the internal address data bus. Specifically there is a BlockRAM, a couple of static readonly registers, a read-write test register, and a FIFO. The address mapping for these things is defined in the VHDL package file.
 
-Note the XCIX IP core package needed to be regenerated because the Artix family uses different MGTs.
+### Required Clocks
 
-### Clocks
-
-This design requires a 125MHz MGT refclk and a 100MHz system clock (FPGA_MCLK). The microcontroller on the DAPHNE must configure the clock generator to produce these frequencies. The 62.5MHz "main" clock is not used in this design.
+This design requires a 125MHz MGT refclk and a 100MHz system clock (FPGA_MCLK). The microcontroller on the DAPHNE must configure the clock generator to produce these frequencies. The 62.5MHz "main" clock is not used in this design as it is internally generated using an MMCM.
 
 ## DAPHNE specific logic
 
 ### Timestamp Counter
 
-A free running 64 bit counter is used as the timestamp.
+A free running 64 bit counter is used as the timestamp. This timestamp can be read from a dedicated spy buffer.
 
 ### AFE Front End
 
@@ -38,7 +36,7 @@ There are 45 spy buffers for the AFEs. Each spy buffer is 14 bits wide by 4k dee
 
 ### Trigger
 
-All spy buffers are triggered from a common signal, either the external SMA input on the rear panel, or by writing to a specific register from the Ethernet side. Once triggered, the spy buffers capture data, then stop and rearm waiting for the next trigger.
+All spy buffers are triggered from a common signal, a rising edge on the external SMA input on the rear panel, OR by writing to a specific register from the Ethernet side. Once triggered, the spy buffers capture data, then stop and rearm waiting for the next trigger.
 
 ### DAPHNE LEDs
 
@@ -53,7 +51,7 @@ Note that the rightmost LED "LED5" is controlled by the uC. Refer to the top_lev
 
 Some example routines are included, they are written in Python and included in the src directory. The default Ethernet MAC address (00:80:55:EC:00:0C) and IP address (192.168.133.12) are defined in the VHDL package file. These python programs will read from and write to the various test registers and memories mentioned above.
 
-### Memory Map
+### Internal Memory Map
 
 The memory map is defined in daphne_package.vhd and the address space is 32 bit. Data width is 64 bits.
 ```
@@ -64,8 +62,8 @@ The memory map is defined in daphne_package.vhd and the address space is 32 bit.
 0x12345678         Test register, R/W, 64 bit
 0x80000000         Test FIFO, 512 x 64, R/W, 64-bit
 
-0x00002000               Write anything to trigger spy buffers, W/O
-0x00002001               Write anything to reset the AFE front end logic, need to do this first!
+0x00002000               Write anything to trigger spy buffers
+0x00002001               Write anything to reset the AFE front end logic, need to do this first, before calibration.
 
 Write anything these registers to BITSLIP the corresponding AFE chip:
 
