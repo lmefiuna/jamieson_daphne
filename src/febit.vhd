@@ -25,8 +25,7 @@ port(
     delay_clk:  in std_logic;                     -- clock for loading idelay value
     delay_ld:   in std_logic;                     -- sync delay load
     delay_din:  in std_logic_vector(4 downto 0);  -- sync delay value (range 0 to 31)
-    delay_dout: out std_logic_vector(4 downto 0);
-    q:          out std_logic_vector(13 downto 0) -- aligned data
+    q:          out std_logic_vector(15 downto 0) -- aligned data
   );
 end febit;
 
@@ -65,7 +64,7 @@ begin
         SIGNAL_PATTERN        => "DATA"
     )
     port map(
-        CNTVALUEOUT => delay_dout,
+        CNTVALUEOUT => open,
         DATAOUT     => din_delayed,
         C           => delay_clk,
         CE          => '0',
@@ -149,7 +148,7 @@ begin
         SHIFTOUT2         => open,
         SHIFTIN1          => icascade1, -- from master
         SHIFTIN2          => icascade2,
-        BITSLIP           => bitslip,   -- sync to MCLK
+        BITSLIP           => '0',       -- maybe only BITSLIP the master, not the slave?
         CE1               => '1',       -- always clock enable
         CE2               => '1',      
         CLK               => fclk,    -- fast bit clock
@@ -166,5 +165,8 @@ begin
         OCLKB             => '0',
         O                 => open
     );
+
+    q(14) <= '0';
+    q(15) <= '0';
 
 end febit_arch;

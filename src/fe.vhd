@@ -43,10 +43,10 @@ use work.daphne_package.all;
 entity fe is
 port(
 
-    -- AFE interface 5 x 9 = 45 LVDS pairs
+    -- AFE interface 5 x 9 = 45 LVDS pairs (7..0 = data, 8 = frame)
 
-    afe_p: in std_logic_vector(44 downto 0);
-    afe_n: in std_logic_vector(44 downto 0);
+    afe_p: in array_5x9_type;
+    afe_n: in array_5x9_type;
     afe_clk_p:  out std_logic; -- copy of 62.5MHz master clock sent to AFEs
     afe_clk_n:  out std_logic;
 
@@ -54,19 +54,16 @@ port(
 
     mclk:   in std_logic; -- master clock 62.5MHz
     fclk:   in std_logic; -- 7 x master clock = 437.5MHz
-    fclkb:  in std_logic;
-    sclk:   in std_logic; -- 200MHz system clock, constant, 
+    fclkb:  in std_logic; 
+    sclk:   in std_logic; -- 200MHz system clock, constant
     reset:  in std_logic; -- async reset the front end logic (must do this before use!)
-    bitslip:  in  std_logic_vector(44 downto 0); -- bitslip sync to MCLK, assert for only 1 clock cycle at a time
+    bitslip:  in  std_logic_vector(4 downto 0); -- bitslip sync to MCLK, assert for only 1 clock cycle at a time
 
     delay_clk: in std_logic; -- clock for writing iserdes delay value
-    delay_ld:  in  std_logic_vector(44 downto 0); -- write delay value strobe
+    delay_ld:  in  std_logic_vector(4 downto 0); -- write delay value strobe
     delay_din: in  std_logic_vector(4 downto 0);  -- delay value to write range 0-31
-    delay_dout: out array45x5_type; -- delay value readback values
-    delay_rdy: out std_logic;
 
-    afe: out array45x14_type
-
+    q: out array_5x9x16_type
   );
 end fe;
 
@@ -74,27 +71,28 @@ architecture fe_arch of fe is
 
     component febit -- single bit alignment component
     port(
-        din_p, din_n:  std_logic;
-        mclk:     in std_logic;
-        fclk:     in std_logic;
-        fclkb:    in std_logic;
-        reset:    in std_logic; -- sync to MCLK
-        bitslip:  in std_logic; -- sync to MCLK
-        delay_clk: in std_logic;
-        delay_ld:  in std_logic;
-        delay_din: in std_logic_vector(4 downto 0);
-        delay_dout: out std_logic_vector(4 downto 0);
-        q:        out std_logic_vector(13 downto 0)
+        din_p:      in std_logic;
+        din_n:      in std_logic;
+        mclk:       in std_logic;
+        fclk:       in std_logic;
+        fclkb:      in std_logic;
+        reset:      in std_logic;
+        bitslip:    in std_logic; -- sync to MCLK
+        delay_clk:  in std_logic;
+        delay_ld:   in std_logic;
+        delay_din:  in std_logic_vector(4 downto 0);
+        q:         out std_logic_vector(15 downto 0)
       );
     end component;
 
     signal clock_out_temp: std_logic;
     signal rst_reg: std_logic_vector(15 downto 0);
-    signal idelayctrl_rst_reg, mrst_reg: std_logic;
+    signal idelayctrl_rst_reg: std_logic;
+    signal reset_mclk_reg: std_logic;
 
 begin
 
-    -- Output the master clock to the AFEs 
+    -- Forward the master clock to the AFEs (via ext clock fanout chip U20)
 
     ODDR_inst: ODDR 
     generic map( DDR_CLK_EDGE => "OPPOSITE_EDGE" )
@@ -134,41 +132,39 @@ begin
         port map(
             REFCLK => sclk,
             RST    => idelayctrl_rst_reg, -- minimum pulse width is 60ns! MUST pulse this before using idelay!
-            RDY    => delay_rdy);
+            RDY    => open);
 
     -- the reset pulse sent to febit should be sync to mclk, square that up here
-    -- used by iserdes modules, not used by iserdes
+    -- used by iserdes modules, not used by idelay
 
     mreset_proc: process(mclk)
     begin
         if rising_edge(mclk) then
-            mrst_reg <= idelayctrl_rst_reg;
+            reset_mclk_reg <= reset;
         end if;
     end process mreset_proc;
 
-    -- instantiate 45 x single bit FEBIT modules
+    -- instantiate 45 single bit FEBIT modules
 
-    gen_febit: for i in 44 downto 0 generate
+    gen_afe: for a in 4 downto 0 generate
+        gen_bit: for b in 8 downto 0 generate
 
-        febit_inst: febit
-        port map(
-            din_p    => afe_p(i),
-            din_n    => afe_n(i),
-            mclk     => mclk,
-            fclk     => fclk,
-            fclkb    => fclkb,
-            reset    => mrst_reg,
-            bitslip  => bitslip(i),
+            febit_d_inst: febit
+            port map(
+                din_p     => afe_p(a)(b), -- 5x9
+                din_n     => afe_n(a)(b),
+                mclk      => mclk,
+                fclk      => fclk,
+                fclkb     => fclkb,
+                reset     => reset_mclk_reg,
+                bitslip   => bitslip(a),
+                delay_clk => delay_clk,
+                delay_ld  => delay_ld(a),
+                delay_din => delay_din,
+                q         => q(a)(b));  -- 5x9x16
 
-            delay_clk => delay_clk,
-            delay_ld  => delay_ld(i),
-            delay_din => delay_din,
-            delay_dout => delay_dout(i),
-
-            q         => afe(i) 
-          );
-
-    end generate;
+        end generate gen_bit;
+    end generate gen_afe;
 
 
 
