@@ -148,11 +148,11 @@ begin
         SHIFTOUT2         => open,
         SHIFTIN1          => icascade1, -- from master
         SHIFTIN2          => icascade2,
-        BITSLIP           => '0',       -- maybe only BITSLIP the master, not the slave?
-        CE1               => '1',       -- always clock enable
+        BITSLIP           => bitslip,   
+        CE1               => '1',       
         CE2               => '1',      
-        CLK               => fclk,    -- fast bit clock
-        CLKB              => fclkb,   -- inverted fast clock
+        CLK               => fclk,    
+        CLKB              => fclkb,   
         CLKDIV            => mclk, 
         CLKDIVP           => '0',       -- tie low
         D                 => '0',       -- not used on slave

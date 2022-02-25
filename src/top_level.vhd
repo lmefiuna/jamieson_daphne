@@ -248,7 +248,7 @@ begin
         CLKOUT1_DUTY_CYCLE   => 0.500,
         CLKOUT1_USE_FINE_PS  => FALSE,
         CLKOUT2_DIVIDE       => 2,
-        CLKOUT2_PHASE        => 0.000,
+        CLKOUT2_PHASE        => 90.000,  -- introduce 90 deg phase shift on the fast clocks (was 0.000)
         CLKOUT2_DUTY_CYCLE   => 0.500,
         CLKOUT2_USE_FINE_PS  => FALSE,
         CLKIN1_PERIOD        => 10.000
