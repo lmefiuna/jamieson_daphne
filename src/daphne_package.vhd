@@ -34,13 +34,63 @@ package daphne_package is
 
     constant RESETFE_ADDR:    std_logic_vector(31 downto 0) := X"00002001";
 
-    -- write anything to bitslip all channels on the AFE chip
+    -- write anything to bitslip the specified channel, note these are not separate
 
-    constant BITSLIP_AFE0_ADDR:  std_logic_vector(31 downto 0) := X"00003000";
-    constant BITSLIP_AFE1_ADDR:  std_logic_vector(31 downto 0) := X"00003001";
-    constant BITSLIP_AFE2_ADDR:  std_logic_vector(31 downto 0) := X"00003002";
-    constant BITSLIP_AFE3_ADDR:  std_logic_vector(31 downto 0) := X"00003003";
-    constant BITSLIP_AFE4_ADDR:  std_logic_vector(31 downto 0) := X"00003004";
+    constant BITSLIP_AFE0_D0_ADDR:  std_logic_vector(31 downto 0) := X"00003000";
+    constant BITSLIP_AFE0_D1_ADDR:  std_logic_vector(31 downto 0) := X"00003001";
+    constant BITSLIP_AFE0_D2_ADDR:  std_logic_vector(31 downto 0) := X"00003002";
+    constant BITSLIP_AFE0_D3_ADDR:  std_logic_vector(31 downto 0) := X"00003003";
+    constant BITSLIP_AFE0_D4_ADDR:  std_logic_vector(31 downto 0) := X"00003004";
+    constant BITSLIP_AFE0_D5_ADDR:  std_logic_vector(31 downto 0) := X"00003005";
+    constant BITSLIP_AFE0_D6_ADDR:  std_logic_vector(31 downto 0) := X"00003006";
+    constant BITSLIP_AFE0_D7_ADDR:  std_logic_vector(31 downto 0) := X"00003007";
+    constant BITSLIP_AFE0_FR_ADDR:  std_logic_vector(31 downto 0) := X"00003008";
+
+    constant BITSLIP_AFE1_D0_ADDR:  std_logic_vector(31 downto 0) := X"00003010";
+    constant BITSLIP_AFE1_D1_ADDR:  std_logic_vector(31 downto 0) := X"00003011";
+    constant BITSLIP_AFE1_D2_ADDR:  std_logic_vector(31 downto 0) := X"00003012";
+    constant BITSLIP_AFE1_D3_ADDR:  std_logic_vector(31 downto 0) := X"00003013";
+    constant BITSLIP_AFE1_D4_ADDR:  std_logic_vector(31 downto 0) := X"00003014";
+    constant BITSLIP_AFE1_D5_ADDR:  std_logic_vector(31 downto 0) := X"00003015";
+    constant BITSLIP_AFE1_D6_ADDR:  std_logic_vector(31 downto 0) := X"00003016";
+    constant BITSLIP_AFE1_D7_ADDR:  std_logic_vector(31 downto 0) := X"00003017";
+    constant BITSLIP_AFE1_FR_ADDR:  std_logic_vector(31 downto 0) := X"00003018";
+
+    constant BITSLIP_AFE2_D0_ADDR:  std_logic_vector(31 downto 0) := X"00003020";
+    constant BITSLIP_AFE2_D1_ADDR:  std_logic_vector(31 downto 0) := X"00003021";
+    constant BITSLIP_AFE2_D2_ADDR:  std_logic_vector(31 downto 0) := X"00003022";
+    constant BITSLIP_AFE2_D3_ADDR:  std_logic_vector(31 downto 0) := X"00003023";
+    constant BITSLIP_AFE2_D4_ADDR:  std_logic_vector(31 downto 0) := X"00003024";
+    constant BITSLIP_AFE2_D5_ADDR:  std_logic_vector(31 downto 0) := X"00003025";
+    constant BITSLIP_AFE2_D6_ADDR:  std_logic_vector(31 downto 0) := X"00003026";
+    constant BITSLIP_AFE2_D7_ADDR:  std_logic_vector(31 downto 0) := X"00003027";
+    constant BITSLIP_AFE2_FR_ADDR:  std_logic_vector(31 downto 0) := X"00003028";
+
+    constant BITSLIP_AFE3_D0_ADDR:  std_logic_vector(31 downto 0) := X"00003030";
+    constant BITSLIP_AFE3_D1_ADDR:  std_logic_vector(31 downto 0) := X"00003031";
+    constant BITSLIP_AFE3_D2_ADDR:  std_logic_vector(31 downto 0) := X"00003032";
+    constant BITSLIP_AFE3_D3_ADDR:  std_logic_vector(31 downto 0) := X"00003033";
+    constant BITSLIP_AFE3_D4_ADDR:  std_logic_vector(31 downto 0) := X"00003034";
+    constant BITSLIP_AFE3_D5_ADDR:  std_logic_vector(31 downto 0) := X"00003035";
+    constant BITSLIP_AFE3_D6_ADDR:  std_logic_vector(31 downto 0) := X"00003036";
+    constant BITSLIP_AFE3_D7_ADDR:  std_logic_vector(31 downto 0) := X"00003037";
+    constant BITSLIP_AFE3_FR_ADDR:  std_logic_vector(31 downto 0) := X"00003038";
+
+    constant BITSLIP_AFE4_D0_ADDR:  std_logic_vector(31 downto 0) := X"00003040";
+    constant BITSLIP_AFE4_D1_ADDR:  std_logic_vector(31 downto 0) := X"00003041";
+    constant BITSLIP_AFE4_D2_ADDR:  std_logic_vector(31 downto 0) := X"00003042";
+    constant BITSLIP_AFE4_D3_ADDR:  std_logic_vector(31 downto 0) := X"00003043";
+    constant BITSLIP_AFE4_D4_ADDR:  std_logic_vector(31 downto 0) := X"00003044";
+    constant BITSLIP_AFE4_D5_ADDR:  std_logic_vector(31 downto 0) := X"00003045";
+    constant BITSLIP_AFE4_D6_ADDR:  std_logic_vector(31 downto 0) := X"00003046";
+    constant BITSLIP_AFE4_D7_ADDR:  std_logic_vector(31 downto 0) := X"00003047";
+    constant BITSLIP_AFE4_FR_ADDR:  std_logic_vector(31 downto 0) := X"00003048";
+
+
+
+
+
+
 
     -- write idelay value (range 0-31) to all channels of the AFE chip
 

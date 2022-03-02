@@ -65,13 +65,58 @@ The memory map is defined in daphne_package.vhd and the address space is 32 bit.
 0x00002000               Write anything to trigger spy buffers
 0x00002001               Write anything to reset the AFE front end logic, need to do this first, before calibration.
 
-Write anything these registers to BITSLIP the corresponding AFE chip:
+Write anything these registers to BITSLIP the corresponding AFE chip 
+(note that bitslip is applied to individual channels now!)
 
-0x00003000 bitslip AFE0
-0x00003001 bitslip AFE1
-0x00003002 bitslip AFE2
-0x00003003 bitslip AFE3
-0x00003004 bitslip AFE4
+0x00003000 bitslip AFE0 D0
+0x00003001 bitslip AFE0 D1 
+0x00003002 bitslip AFE0 D2 
+0x00003003 bitslip AFE0 D3
+0x00003004 bitslip AFE0 D4
+0x00003005 bitslip AFE0 D5
+0x00003006 bitslip AFE0 D6 
+0x00003007 bitslip AFE0 D7 
+0x00003008 bitslip AFE0 Frame
+
+0x00003010 bitslip AFE1 D0
+0x00003011 bitslip AFE1 D1 
+0x00003012 bitslip AFE1 D2 
+0x00003013 bitslip AFE1 D3
+0x00003014 bitslip AFE1 D4
+0x00003015 bitslip AFE1 D5
+0x00003016 bitslip AFE1 D6 
+0x00003017 bitslip AFE1 D7 
+0x00003018 bitslip AFE1 Frame
+
+0x00003020 bitslip AFE2 D0
+0x00003021 bitslip AFE2 D1 
+0x00003022 bitslip AFE2 D2 
+0x00003023 bitslip AFE2 D3
+0x00003024 bitslip AFE2 D4
+0x00003025 bitslip AFE2 D5
+0x00003026 bitslip AFE2 D6 
+0x00003027 bitslip AFE2 D7 
+0x00003028 bitslip AFE2 Frame
+
+0x00003030 bitslip AFE3 D0
+0x00003031 bitslip AFE3 D1 
+0x00003032 bitslip AFE3 D2 
+0x00003033 bitslip AFE3 D3
+0x00003034 bitslip AFE3 D4
+0x00003035 bitslip AFE3 D5
+0x00003036 bitslip AFE3 D6 
+0x00003037 bitslip AFE3 D7 
+0x00003038 bitslip AFE3 Frame
+
+0x00003040 bitslip AFE4 D0
+0x00003041 bitslip AFE4 D1 
+0x00003042 bitslip AFE4 D2 
+0x00003043 bitslip AFE4 D3
+0x00003044 bitslip AFE4 D4
+0x00003045 bitslip AFE4 D5
+0x00003046 bitslip AFE4 D6 
+0x00003047 bitslip AFE4 D7 
+0x00003048 bitslip AFE4 Frame
 
 Write fine delay tap value (range 0-31) the correspoding AFE chip:
 

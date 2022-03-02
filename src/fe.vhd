@@ -57,7 +57,7 @@ port(
     -- fclkb:  in std_logic; 
     sclk:   in std_logic; -- 200MHz system clock, constant
     reset:  in std_logic; -- async reset the front end logic (must do this before use!)
-    bitslip:  in  std_logic_vector(4 downto 0); -- bitslip sync to MCLK, assert for only 1 clock cycle at a time
+    bitslip:  in  array_5x9_type; -- bitslip sync to MCLK, assert for only 1 clock cycle at a time
 
     delay_clk: in std_logic; -- clock for writing iserdes delay value
     delay_ld:  in  std_logic_vector(4 downto 0); -- write delay value strobe
@@ -155,7 +155,7 @@ begin
                 mclk      => mclk,
                 fclk      => fclk,
                 reset     => reset_mclk_reg,
-                bitslip   => bitslip(a),
+                bitslip   => bitslip(a)(b),
                 delay_clk => delay_clk,
                 delay_ld  => delay_ld(a),
                 delay_din => delay_din,

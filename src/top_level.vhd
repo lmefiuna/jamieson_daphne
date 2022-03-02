@@ -149,7 +149,7 @@ architecture top_level_arch of top_level is
 
         mclk:    in std_logic; -- master clock 62.5MHz
         fclk:    in std_logic; -- 7 x master clock = 437.5MHz
-        bitslip: in std_logic_vector(4 downto 0);  -- sync to MCLK
+        bitslip: in array_5x9_type;  -- sync to MCLK
         q:       out array_5x9x16_type
       );
     end component;
@@ -207,8 +207,8 @@ architecture top_level_arch of top_level is
     signal mclk: std_logic;
     signal fclk: std_logic;
 
-    signal bitslip_tmp, bitslip3_oei_reg, bitslip2_oei_reg, bitslip1_oei_reg, bitslip0_oei_reg: std_logic_vector(4 downto 0);  
-    signal bitslip0_mclk_reg, bitslip1_mclk_reg, bitslip_mclk: std_logic_vector(4 downto 0);  
+    signal bitslip_tmp, bitslip3_oei_reg, bitslip2_oei_reg, bitslip1_oei_reg, bitslip0_oei_reg: array_5x9_type;  
+    signal bitslip0_mclk_reg, bitslip1_mclk_reg, bitslip_mclk: array_5x9_type;  
 
     signal delay_ld: std_logic_vector(4 downto 0);
 
@@ -353,14 +353,58 @@ begin
 
     -- address decode bitslip
     -- this signal originates in the oeiclk domain (125MHz) but must be resync in the in MCLK domain (62.5MHz) *AND* 
-    -- it must be asserted for only ONE MCLK cycle. the oeiclk domain is faster, so pulse stretch
+    -- it must be asserted for only *ONE* MCLK cycle. the oeiclk domain is faster, so pulse stretch
     -- it for 3 cycles, then edge detect this signal in the MCLK domain and assert this for one MCLK cycle    
 
-    bitslip_tmp(0) <= '1' when (std_match(rx_addr,BITSLIP_AFE0_ADDR) and rx_wren='1') else '0';
-    bitslip_tmp(1) <= '1' when (std_match(rx_addr,BITSLIP_AFE1_ADDR) and rx_wren='1') else '0';
-    bitslip_tmp(2) <= '1' when (std_match(rx_addr,BITSLIP_AFE2_ADDR) and rx_wren='1') else '0';
-    bitslip_tmp(3) <= '1' when (std_match(rx_addr,BITSLIP_AFE3_ADDR) and rx_wren='1') else '0';
-    bitslip_tmp(4) <= '1' when (std_match(rx_addr,BITSLIP_AFE4_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(0)(0) <= '1' when (std_match(rx_addr,BITSLIP_AFE0_D0_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(0)(1) <= '1' when (std_match(rx_addr,BITSLIP_AFE0_D1_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(0)(2) <= '1' when (std_match(rx_addr,BITSLIP_AFE0_D2_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(0)(3) <= '1' when (std_match(rx_addr,BITSLIP_AFE0_D3_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(0)(4) <= '1' when (std_match(rx_addr,BITSLIP_AFE0_D4_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(0)(5) <= '1' when (std_match(rx_addr,BITSLIP_AFE0_D5_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(0)(6) <= '1' when (std_match(rx_addr,BITSLIP_AFE0_D6_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(0)(7) <= '1' when (std_match(rx_addr,BITSLIP_AFE0_D7_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(0)(8) <= '1' when (std_match(rx_addr,BITSLIP_AFE0_FR_ADDR) and rx_wren='1') else '0';
+
+    bitslip_tmp(1)(0) <= '1' when (std_match(rx_addr,BITSLIP_AFE1_D0_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(1)(1) <= '1' when (std_match(rx_addr,BITSLIP_AFE1_D1_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(1)(2) <= '1' when (std_match(rx_addr,BITSLIP_AFE1_D2_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(1)(3) <= '1' when (std_match(rx_addr,BITSLIP_AFE1_D3_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(1)(4) <= '1' when (std_match(rx_addr,BITSLIP_AFE1_D4_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(1)(5) <= '1' when (std_match(rx_addr,BITSLIP_AFE1_D5_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(1)(6) <= '1' when (std_match(rx_addr,BITSLIP_AFE1_D6_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(1)(7) <= '1' when (std_match(rx_addr,BITSLIP_AFE1_D7_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(1)(8) <= '1' when (std_match(rx_addr,BITSLIP_AFE1_FR_ADDR) and rx_wren='1') else '0';
+
+    bitslip_tmp(2)(0) <= '1' when (std_match(rx_addr,BITSLIP_AFE2_D0_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(2)(1) <= '1' when (std_match(rx_addr,BITSLIP_AFE2_D1_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(2)(2) <= '1' when (std_match(rx_addr,BITSLIP_AFE2_D2_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(2)(3) <= '1' when (std_match(rx_addr,BITSLIP_AFE2_D3_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(2)(4) <= '1' when (std_match(rx_addr,BITSLIP_AFE2_D4_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(2)(5) <= '1' when (std_match(rx_addr,BITSLIP_AFE2_D5_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(2)(6) <= '1' when (std_match(rx_addr,BITSLIP_AFE2_D6_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(2)(7) <= '1' when (std_match(rx_addr,BITSLIP_AFE2_D7_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(2)(8) <= '1' when (std_match(rx_addr,BITSLIP_AFE2_FR_ADDR) and rx_wren='1') else '0';
+
+    bitslip_tmp(3)(0) <= '1' when (std_match(rx_addr,BITSLIP_AFE3_D0_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(3)(1) <= '1' when (std_match(rx_addr,BITSLIP_AFE3_D1_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(3)(2) <= '1' when (std_match(rx_addr,BITSLIP_AFE3_D2_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(3)(3) <= '1' when (std_match(rx_addr,BITSLIP_AFE3_D3_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(3)(4) <= '1' when (std_match(rx_addr,BITSLIP_AFE3_D4_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(3)(5) <= '1' when (std_match(rx_addr,BITSLIP_AFE3_D5_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(3)(6) <= '1' when (std_match(rx_addr,BITSLIP_AFE3_D6_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(3)(7) <= '1' when (std_match(rx_addr,BITSLIP_AFE3_D7_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(3)(8) <= '1' when (std_match(rx_addr,BITSLIP_AFE3_FR_ADDR) and rx_wren='1') else '0';
+
+    bitslip_tmp(4)(0) <= '1' when (std_match(rx_addr,BITSLIP_AFE4_D0_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(4)(1) <= '1' when (std_match(rx_addr,BITSLIP_AFE4_D1_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(4)(2) <= '1' when (std_match(rx_addr,BITSLIP_AFE4_D2_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(4)(3) <= '1' when (std_match(rx_addr,BITSLIP_AFE4_D3_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(4)(4) <= '1' when (std_match(rx_addr,BITSLIP_AFE4_D4_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(4)(5) <= '1' when (std_match(rx_addr,BITSLIP_AFE4_D5_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(4)(6) <= '1' when (std_match(rx_addr,BITSLIP_AFE4_D6_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(4)(7) <= '1' when (std_match(rx_addr,BITSLIP_AFE4_D7_ADDR) and rx_wren='1') else '0';
+    bitslip_tmp(4)(8) <= '1' when (std_match(rx_addr,BITSLIP_AFE4_FR_ADDR) and rx_wren='1') else '0';
 
     bs_oei_proc: process(oeiclk) -- 125MHz domain
     begin
@@ -368,7 +412,11 @@ begin
             bitslip0_oei_reg <= bitslip_tmp;
             bitslip1_oei_reg <= bitslip0_oei_reg;
             bitslip2_oei_reg <= bitslip1_oei_reg;
-            bitslip3_oei_reg <= bitslip2_oei_reg or bitslip1_oei_reg or bitslip0_oei_reg; -- will be high for minimum 3 oei clks
+            for a in 4 downto 0 loop
+                for b in 8 downto 0 loop
+                    bitslip3_oei_reg(a)(b) <= bitslip2_oei_reg(a)(b) or bitslip1_oei_reg(a)(b) or bitslip0_oei_reg(a)(b); -- will be high for minimum 3 oei clks
+                end loop;
+            end loop;
         end if;
     end process bs_oei_proc;
 
@@ -380,11 +428,11 @@ begin
         end if;
     end process bs_mclk_proc;
 
-    bitslip_mclk(0) <= '1' when ( bitslip1_mclk_reg(0)='0' and bitslip0_mclk_reg(0)='1' ) else '0';
-    bitslip_mclk(1) <= '1' when ( bitslip1_mclk_reg(1)='0' and bitslip0_mclk_reg(1)='1' ) else '0';
-    bitslip_mclk(2) <= '1' when ( bitslip1_mclk_reg(2)='0' and bitslip0_mclk_reg(2)='1' ) else '0';
-    bitslip_mclk(3) <= '1' when ( bitslip1_mclk_reg(3)='0' and bitslip0_mclk_reg(3)='1' ) else '0';
-    bitslip_mclk(4) <= '1' when ( bitslip1_mclk_reg(4)='0' and bitslip0_mclk_reg(4)='1' ) else '0';
+    gen_bs_afe: for a in 4 downto 0 generate
+        gen_bs_bit: for b in 8 downto 0 generate
+            bitslip_mclk(a)(b) <= '1' when ( bitslip1_mclk_reg(a)(b)='0' and bitslip0_mclk_reg(a)(b)='1' ) else '0';
+        end generate gen_bs_bit;
+    end generate gen_bs_afe;
 
     -- now instantiate the AFE front end, total 45 channels (40 AFE data channels + 5 frame marker channels)
 
@@ -405,7 +453,7 @@ begin
         delay_din => rx_data(4 downto 0),
         delay_ld  => delay_ld(4 downto 0),
 
-        bitslip   => bitslip_mclk(4 downto 0),
+        bitslip   => bitslip_mclk,
         q => afe_dout -- mclk domain 5x9x16
     );
 
