@@ -2,6 +2,7 @@
 -- DAPHNE spy buffer for one link AFE output, 4k deep
 -- reset only resets the trigger logic, it does not erase the buffer contents
 -- triggered on low to to high pulse, then writes next 4096 words into buffer, stops and waits for next trigger
+-- add delay elements to produce 64 deep delay for fixed pretrigger
 -- Jamieson Olsen <jamieson@fnal.gov>
 
 -- port A = 4k x 16 (write) clock domain from afe front end
@@ -34,7 +35,7 @@ end spy;
 architecture spy_arch of spy is
 
     signal addr_reg: std_logic_vector(11 downto 0);
-    signal dia_reg:  std_logic_vector(15 downto 0);
+    signal dia_reg, dia_q, dia_delayed:  std_logic_vector(15 downto 0);
     signal we_reg:   std_logic;
 
     type state_type is (rst, wait4trig, store, wait4done);
@@ -42,8 +43,33 @@ architecture spy_arch of spy is
 
 begin
 
-    -- FSM to wait for trigger pulse and drive addr_reg (write pointer) and we_reg
+    -- input delay elements for fixed pre-trigger cascade two 32 bit shift registers
 
+    gendelay: for i in 15 downto 0 generate
+
+        srlc32e_0_inst : srlc32e
+        port map(
+            clk => clka,
+            ce => '1',
+            a => "11111",
+            d => dia(i),
+            q => open,
+            q31 => dia_q(i)  
+        );
+    
+        srlc32e_1_inst : srlc32e
+        port map(
+            clk => clka,
+            ce => '1',
+            a => "11111",
+            d => dia_q(i),
+            q => dia_delayed(i),
+            q31 => open  
+        );
+
+    end generate gendelay;
+
+    -- FSM to wait for trigger pulse and drive addr_reg (write pointer) and we_reg
 
     fsm_proc: process(clka)
     begin
@@ -55,7 +81,7 @@ begin
                 addr_reg <= X"000";
                 state    <= rst;
             else
-                dia_reg <= dia;
+                dia_reg <= dia_delayed;
 
                 case state is
                     when rst =>
