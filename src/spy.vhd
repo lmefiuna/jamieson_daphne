@@ -35,7 +35,7 @@ end spy;
 architecture spy_arch of spy is
 
     signal addr_reg: std_logic_vector(11 downto 0);
-    signal dia_reg, dia_q, dia_delayed:  std_logic_vector(15 downto 0);
+    signal dia_reg, dia_q0, dia_q1, dia_q2, dia_q3, dia_delayed:  std_logic_vector(15 downto 0);
     signal we_reg:   std_logic;
 
     type state_type is (rst, wait4trig, store, wait4done);
@@ -54,15 +54,45 @@ begin
             a => "11111",
             d => dia(i),
             q => open,
-            q31 => dia_q(i)  
+            q31 => dia_q0(i)  
         );
-    
+        
         srlc32e_1_inst : srlc32e
         port map(
             clk => clka,
             ce => '1',
             a => "11111",
-            d => dia_q(i),
+            d => dia_q0(i),
+            q => open,
+            q31 => dia_q1(i)  
+        );
+        
+        srlc32e_2_inst : srlc32e
+        port map(
+            clk => clka,
+            ce => '1',
+            a => "11111",
+            d => dia_q1(i),
+            q => open,
+            q31 => dia_q2(i)  
+        );
+        
+        srlc32e_3_inst : srlc32e
+        port map(
+            clk => clka,
+            ce => '1',
+            a => "11111",
+            d => dia_q2(i),
+            q => open,
+            q31 => dia_q3(i)  
+        );
+    
+        srlc32e_4_inst : srlc32e
+        port map(
+            clk => clka,
+            ce => '1',
+            a => "11111",
+            d => dia_q3(i),
             q => dia_delayed(i),
             q31 => open  
         );

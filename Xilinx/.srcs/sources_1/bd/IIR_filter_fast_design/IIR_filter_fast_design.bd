@@ -1,0 +1,706 @@
+{
+  "design": {
+    "design_info": {
+      "boundary_crc": "0x1079C1B7DF968B09",
+      "device": "xc7a200tfbg676-2",
+      "gen_directory": "../../../../.gen/sources_1/bd/IIR_filter_fast_design",
+      "name": "IIR_filter_fast_design",
+      "rev_ctrl_bd_flag": "RevCtrlBdOff",
+      "synth_flow_mode": "None",
+      "tool_version": "2022.1",
+      "validated": "true"
+    },
+    "design_tree": {
+      "filter_FSM_0": "",
+      "filter_mem_block_0": "",
+      "filter_rom_block_0": "",
+      "macc": {
+        "c_accum_0": "",
+        "mult_gen_0": ""
+      },
+      "reg_32_0": "",
+      "util_vector_logic_0": "",
+      "util_vector_logic_1": "",
+      "xlconcat_0": "",
+      "xlconstant_0": "",
+      "xlslice_0": "",
+      "xlslice_1": ""
+    },
+    "ports": {
+      "clk": {
+        "direction": "I"
+      },
+      "enable": {
+        "direction": "I"
+      },
+      "reset": {
+        "direction": "I",
+        "parameters": {
+          "PortType": {
+            "value": "undef",
+            "value_src": "ip_prop"
+          },
+          "PortType.PROP_SRC": {
+            "value": "false",
+            "value_src": "ip_prop"
+          }
+        }
+      },
+      "x": {
+        "type": "data",
+        "direction": "I",
+        "left": "15",
+        "right": "0",
+        "parameters": {
+          "LAYERED_METADATA": {
+            "value": "undef",
+            "value_src": "default"
+          }
+        }
+      },
+      "y": {
+        "type": "data",
+        "direction": "O",
+        "left": "15",
+        "right": "0",
+        "parameters": {
+          "LAYERED_METADATA": {
+            "value": "undef",
+            "value_src": "default"
+          }
+        }
+      }
+    },
+    "components": {
+      "filter_FSM_0": {
+        "vlnv": "xilinx.com:module_ref:filter_FSM:1.0",
+        "xci_name": "IIR_filter_fast_design_filter_FSM_0_0",
+        "xci_path": "ip\\IIR_filter_fast_design_filter_FSM_0_0_6\\IIR_filter_fast_design_filter_FSM_0_0.xci",
+        "inst_hier_path": "filter_FSM_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "filter_FSM",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I",
+            "parameters": {
+              "POLARITY": {
+                "value": "ACTIVE_HIGH"
+              }
+            }
+          },
+          "enable": {
+            "direction": "I"
+          },
+          "mult_reset": {
+            "type": "rst",
+            "direction": "O",
+            "parameters": {
+              "POLARITY": {
+                "value": "ACTIVE_HIGH"
+              }
+            }
+          },
+          "mult_enable": {
+            "direction": "O"
+          },
+          "acc_reset": {
+            "type": "rst",
+            "direction": "O",
+            "parameters": {
+              "POLARITY": {
+                "value": "ACTIVE_HIGH"
+              }
+            }
+          },
+          "acc_enable": {
+            "direction": "O"
+          },
+          "output_reg_enable": {
+            "direction": "O"
+          },
+          "x_mem_enable": {
+            "direction": "O"
+          },
+          "y_mem_enable": {
+            "direction": "O"
+          },
+          "mem_dir": {
+            "direction": "O",
+            "left": "2",
+            "right": "0"
+          }
+        }
+      },
+      "filter_mem_block_0": {
+        "vlnv": "xilinx.com:module_ref:filter_mem_block:1.0",
+        "xci_name": "IIR_filter_fast_design_filter_mem_block_0_0",
+        "xci_path": "ip\\IIR_filter_fast_design_filter_mem_block_0_0_6\\IIR_filter_fast_design_filter_mem_block_0_0.xci",
+        "inst_hier_path": "filter_mem_block_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "filter_mem_block",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I",
+            "parameters": {
+              "POLARITY": {
+                "value": "ACTIVE_HIGH"
+              }
+            }
+          },
+          "x_enable": {
+            "direction": "I"
+          },
+          "y_enable": {
+            "direction": "I"
+          },
+          "dir": {
+            "direction": "I",
+            "left": "2",
+            "right": "0"
+          },
+          "x": {
+            "direction": "I",
+            "left": "31",
+            "right": "0",
+            "parameters": {
+              "PortWidth": {
+                "value": "32",
+                "value_src": "ip_prop"
+              }
+            }
+          },
+          "y": {
+            "direction": "I",
+            "left": "31",
+            "right": "0"
+          },
+          "out_mem": {
+            "direction": "O",
+            "left": "31",
+            "right": "0"
+          }
+        }
+      },
+      "filter_rom_block_0": {
+        "vlnv": "xilinx.com:module_ref:filter_rom_block:1.0",
+        "xci_name": "IIR_filter_fast_design_filter_rom_block_0_0",
+        "xci_path": "ip\\IIR_filter_fast_design_filter_rom_block_0_0_6\\IIR_filter_fast_design_filter_rom_block_0_0.xci",
+        "inst_hier_path": "filter_rom_block_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "filter_rom_block",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I",
+            "parameters": {
+              "POLARITY": {
+                "value": "ACTIVE_HIGH"
+              }
+            }
+          },
+          "enable": {
+            "direction": "I"
+          },
+          "y": {
+            "direction": "O",
+            "left": "31",
+            "right": "0"
+          }
+        }
+      },
+      "macc": {
+        "ports": {
+          "A": {
+            "type": "data",
+            "direction": "I",
+            "left": "31",
+            "right": "0"
+          },
+          "B": {
+            "type": "data",
+            "direction": "I",
+            "left": "31",
+            "right": "0"
+          },
+          "acc_enable": {
+            "direction": "I"
+          },
+          "acc_output": {
+            "type": "data",
+            "direction": "O",
+            "left": "47",
+            "right": "0"
+          },
+          "acc_reset": {
+            "direction": "I"
+          },
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "left": "31",
+            "right": "0"
+          },
+          "mult_enable": {
+            "direction": "I"
+          },
+          "mult_reset": {
+            "direction": "I"
+          }
+        },
+        "components": {
+          "c_accum_0": {
+            "vlnv": "xilinx.com:ip:c_accum:12.0",
+            "xci_name": "IIR_filter_fast_design_c_accum_0_0",
+            "xci_path": "ip\\IIR_filter_fast_design_c_accum_0_0_6\\IIR_filter_fast_design_c_accum_0_0.xci",
+            "inst_hier_path": "macc/c_accum_0",
+            "parameters": {
+              "Bypass": {
+                "value": "false"
+              },
+              "CE": {
+                "value": "true"
+              },
+              "Implementation": {
+                "value": "DSP48"
+              },
+              "Input_Type": {
+                "value": "Signed"
+              },
+              "Input_Width": {
+                "value": "48"
+              },
+              "Latency": {
+                "value": "1"
+              },
+              "Latency_Configuration": {
+                "value": "Manual"
+              },
+              "Output_Width": {
+                "value": "48"
+              },
+              "SCLR": {
+                "value": "true"
+              }
+            }
+          },
+          "mult_gen_0": {
+            "vlnv": "xilinx.com:ip:mult_gen:12.0",
+            "xci_name": "IIR_filter_fast_design_mult_gen_0_0",
+            "xci_path": "ip\\IIR_filter_fast_design_mult_gen_0_0_6\\IIR_filter_fast_design_mult_gen_0_0.xci",
+            "inst_hier_path": "macc/mult_gen_0",
+            "parameters": {
+              "ClockEnable": {
+                "value": "true"
+              },
+              "MultType": {
+                "value": "Parallel_Multiplier"
+              },
+              "Multiplier_Construction": {
+                "value": "Use_Mults"
+              },
+              "OptGoal": {
+                "value": "Speed"
+              },
+              "OutputWidthHigh": {
+                "value": "47"
+              },
+              "PortAWidth": {
+                "value": "32"
+              },
+              "PortBWidth": {
+                "value": "32"
+              },
+              "SyncClear": {
+                "value": "true"
+              },
+              "Use_Custom_Output_Width": {
+                "value": "true"
+              }
+            }
+          }
+        },
+        "nets": {
+          "A_1": {
+            "ports": [
+              "A",
+              "mult_gen_0/A"
+            ]
+          },
+          "B_1": {
+            "ports": [
+              "B",
+              "mult_gen_0/B"
+            ]
+          },
+          "acc_enable_1": {
+            "ports": [
+              "acc_enable",
+              "c_accum_0/CE"
+            ]
+          },
+          "acc_reset_1": {
+            "ports": [
+              "acc_reset",
+              "c_accum_0/SCLR"
+            ]
+          },
+          "c_accum_0_Q": {
+            "ports": [
+              "c_accum_0/Q",
+              "acc_output"
+            ]
+          },
+          "clk_1": {
+            "ports": [
+              "clk",
+              "c_accum_0/CLK",
+              "mult_gen_0/CLK"
+            ]
+          },
+          "mult_enable_1": {
+            "ports": [
+              "mult_enable",
+              "mult_gen_0/CE"
+            ]
+          },
+          "mult_gen_0_P": {
+            "ports": [
+              "mult_gen_0/P",
+              "c_accum_0/B"
+            ]
+          },
+          "mult_reset_1": {
+            "ports": [
+              "mult_reset",
+              "mult_gen_0/SCLR"
+            ]
+          }
+        }
+      },
+      "reg_32_0": {
+        "vlnv": "xilinx.com:module_ref:reg_32:1.0",
+        "xci_name": "IIR_filter_fast_design_reg_32_0_0",
+        "xci_path": "ip\\IIR_filter_fast_design_reg_32_0_0_6\\IIR_filter_fast_design_reg_32_0_0.xci",
+        "inst_hier_path": "reg_32_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "reg_32",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I",
+            "parameters": {
+              "POLARITY": {
+                "value": "ACTIVE_HIGH"
+              }
+            }
+          },
+          "enable": {
+            "direction": "I"
+          },
+          "x": {
+            "direction": "I",
+            "left": "31",
+            "right": "0"
+          },
+          "y": {
+            "direction": "O",
+            "left": "31",
+            "right": "0"
+          }
+        }
+      },
+      "util_vector_logic_0": {
+        "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
+        "xci_name": "IIR_filter_fast_design_util_vector_logic_0_0",
+        "xci_path": "ip\\IIR_filter_fast_design_util_vector_logic_0_0_6\\IIR_filter_fast_design_util_vector_logic_0_0.xci",
+        "inst_hier_path": "util_vector_logic_0",
+        "parameters": {
+          "C_OPERATION": {
+            "value": "or"
+          },
+          "C_SIZE": {
+            "value": "1"
+          }
+        }
+      },
+      "util_vector_logic_1": {
+        "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
+        "xci_name": "IIR_filter_fast_design_util_vector_logic_1_0",
+        "xci_path": "ip\\IIR_filter_fast_design_util_vector_logic_1_0_6\\IIR_filter_fast_design_util_vector_logic_1_0.xci",
+        "inst_hier_path": "util_vector_logic_1",
+        "parameters": {
+          "C_OPERATION": {
+            "value": "or"
+          },
+          "C_SIZE": {
+            "value": "1"
+          }
+        }
+      },
+      "xlconcat_0": {
+        "vlnv": "xilinx.com:ip:xlconcat:2.1",
+        "xci_name": "IIR_filter_fast_design_xlconcat_0_0",
+        "xci_path": "ip\\IIR_filter_fast_design_xlconcat_0_0_6\\IIR_filter_fast_design_xlconcat_0_0.xci",
+        "inst_hier_path": "xlconcat_0",
+        "parameters": {
+          "IN0_WIDTH": {
+            "value": "16"
+          },
+          "IN1_WIDTH": {
+            "value": "16"
+          }
+        }
+      },
+      "xlconstant_0": {
+        "vlnv": "xilinx.com:ip:xlconstant:1.1",
+        "xci_name": "IIR_filter_fast_design_xlconstant_0_0",
+        "xci_path": "ip\\IIR_filter_fast_design_xlconstant_0_0_6\\IIR_filter_fast_design_xlconstant_0_0.xci",
+        "inst_hier_path": "xlconstant_0",
+        "parameters": {
+          "CONST_VAL": {
+            "value": "0"
+          },
+          "CONST_WIDTH": {
+            "value": "16"
+          }
+        }
+      },
+      "xlslice_0": {
+        "vlnv": "xilinx.com:ip:xlslice:1.0",
+        "xci_name": "IIR_filter_fast_design_xlslice_0_0",
+        "xci_path": "ip\\IIR_filter_fast_design_xlslice_0_0_6\\IIR_filter_fast_design_xlslice_0_0.xci",
+        "inst_hier_path": "xlslice_0",
+        "parameters": {
+          "DIN_FROM": {
+            "value": "47"
+          },
+          "DIN_TO": {
+            "value": "16"
+          },
+          "DIN_WIDTH": {
+            "value": "48"
+          },
+          "DOUT_WIDTH": {
+            "value": "32"
+          }
+        }
+      },
+      "xlslice_1": {
+        "vlnv": "xilinx.com:ip:xlslice:1.0",
+        "xci_name": "IIR_filter_fast_design_xlslice_1_0",
+        "xci_path": "ip\\IIR_filter_fast_design_xlslice_1_0_6\\IIR_filter_fast_design_xlslice_1_0.xci",
+        "inst_hier_path": "xlslice_1",
+        "parameters": {
+          "DIN_FROM": {
+            "value": "31"
+          },
+          "DIN_TO": {
+            "value": "16"
+          },
+          "DOUT_WIDTH": {
+            "value": "16"
+          }
+        }
+      }
+    },
+    "nets": {
+      "acc_reset_1": {
+        "ports": [
+          "util_vector_logic_1/Res",
+          "macc/acc_reset"
+        ]
+      },
+      "clk_1": {
+        "ports": [
+          "clk",
+          "filter_FSM_0/clk",
+          "filter_mem_block_0/clk",
+          "filter_rom_block_0/clk",
+          "macc/clk",
+          "reg_32_0/clk"
+        ]
+      },
+      "enable_1": {
+        "ports": [
+          "enable",
+          "filter_FSM_0/enable"
+        ]
+      },
+      "filter_FSM_0_acc_enable": {
+        "ports": [
+          "filter_FSM_0/acc_enable",
+          "macc/acc_enable"
+        ]
+      },
+      "filter_FSM_0_acc_reset": {
+        "ports": [
+          "filter_FSM_0/acc_reset",
+          "util_vector_logic_1/Op2"
+        ]
+      },
+      "filter_FSM_0_macc_enable": {
+        "ports": [
+          "filter_FSM_0/mult_enable",
+          "filter_rom_block_0/enable",
+          "macc/mult_enable"
+        ]
+      },
+      "filter_FSM_0_mem_dir": {
+        "ports": [
+          "filter_FSM_0/mem_dir",
+          "filter_mem_block_0/dir"
+        ]
+      },
+      "filter_FSM_0_mult_reset": {
+        "ports": [
+          "filter_FSM_0/mult_reset",
+          "util_vector_logic_0/Op1"
+        ]
+      },
+      "filter_FSM_0_output_reg_enable": {
+        "ports": [
+          "filter_FSM_0/output_reg_enable",
+          "reg_32_0/enable"
+        ]
+      },
+      "filter_FSM_0_x_mem_enable": {
+        "ports": [
+          "filter_FSM_0/x_mem_enable",
+          "filter_mem_block_0/x_enable"
+        ]
+      },
+      "filter_FSM_0_y_mem_enable": {
+        "ports": [
+          "filter_FSM_0/y_mem_enable",
+          "filter_mem_block_0/y_enable"
+        ]
+      },
+      "filter_mem_block_0_out": {
+        "ports": [
+          "filter_mem_block_0/out_mem",
+          "macc/A"
+        ]
+      },
+      "filter_rom_block_0_y": {
+        "ports": [
+          "filter_rom_block_0/y",
+          "macc/B"
+        ]
+      },
+      "macc_acc_output": {
+        "ports": [
+          "macc/acc_output",
+          "xlslice_0/Din"
+        ]
+      },
+      "mult_reset_1": {
+        "ports": [
+          "util_vector_logic_0/Res",
+          "macc/mult_reset"
+        ]
+      },
+      "reg_32_0_y": {
+        "ports": [
+          "reg_32_0/y",
+          "filter_mem_block_0/y",
+          "xlslice_1/Din"
+        ]
+      },
+      "reset_1": {
+        "ports": [
+          "reset",
+          "filter_FSM_0/reset",
+          "filter_mem_block_0/reset",
+          "filter_rom_block_0/reset",
+          "reg_32_0/reset",
+          "util_vector_logic_0/Op2",
+          "util_vector_logic_1/Op1"
+        ]
+      },
+      "x_1": {
+        "ports": [
+          "x",
+          "xlconcat_0/In1"
+        ]
+      },
+      "xlconcat_0_dout": {
+        "ports": [
+          "xlconcat_0/dout",
+          "filter_mem_block_0/x"
+        ]
+      },
+      "xlconstant_0_dout": {
+        "ports": [
+          "xlconstant_0/dout",
+          "xlconcat_0/In0"
+        ]
+      },
+      "xlslice_0_Dout": {
+        "ports": [
+          "xlslice_0/Dout",
+          "reg_32_0/x"
+        ]
+      },
+      "xlslice_1_Dout": {
+        "ports": [
+          "xlslice_1/Dout",
+          "y"
+        ]
+      }
+    }
+  }
+}

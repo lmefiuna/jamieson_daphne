@@ -165,6 +165,19 @@ architecture top_level_arch of top_level is
         dob:   out std_logic_vector(15 downto 0)
       );
     end component;
+
+    component hpf_pedestal_recovery_filter_v5
+    port(
+        clk: in std_logic;
+        reset: in std_logic;
+        n_1_reset: in std_logic;
+        enable: in std_logic;
+        output_selector: in std_logic_vector(1 downto 0);
+        x: in std_logic_vector(719 downto 0);
+        trigger_output: out std_logic_vector(39 downto 0);
+        y: out std_logic_vector(719 downto 0)
+    );
+    end component;
 	
 	-- declare signals to connect everything up
 
@@ -202,10 +215,11 @@ architecture top_level_arch of top_level is
     signal trig_sync, trig_gbe: std_logic;
     signal trig_gbe0_reg, trig_gbe1_reg, trig_gbe2_reg: std_logic;
 
-    signal sysclk_ibuf, clkfbout, clkfbout_buf, clkout0, clkout1, clkout2, locked: std_logic;
+    signal sysclk_ibuf, clkfbout, clkfbout_buf, clkout0, clkout1, clkout2, clkout3, locked: std_logic;
     signal sclk: std_logic;
     signal mclk: std_logic;
     signal fclk: std_logic;
+    signal ufclk: std_logic;
 
     signal bitslip_tmp, bitslip3_oei_reg, bitslip2_oei_reg, bitslip1_oei_reg, bitslip0_oei_reg: array_5x9_type;  
     signal bitslip0_mclk_reg, bitslip1_mclk_reg, bitslip_mclk: array_5x9_type;  
@@ -213,11 +227,16 @@ architecture top_level_arch of top_level is
     signal delay_ld: std_logic_vector(4 downto 0);
 
     signal afe_dout: array_5x9x16_type;
+    signal afe_dout_filtered: array_5x9x16_type;
     signal spy_bufr: array_5x9x16_type;
+
+    signal afe_dout_pad_bits: std_logic_vector(719 downto 0);
+    signal afe_dout_pad_filtered_bits: std_logic_vector(719 downto 0);
     
     signal timestamp_reg, ts_spy_bufr: std_logic_vector(63 downto 0);
-
-
+    
+    signal trigger_wire: std_logic_vector(39 downto 0);
+    
 begin
 
 	-- sysclk is 100MHz LVDS, receive it with IBUFDS and drive it out on a BUFG net. sysclk comes in on bank 33
@@ -252,6 +271,10 @@ begin
         CLKOUT2_PHASE        => 0.000,
         CLKOUT2_DUTY_CYCLE   => 0.500,
         CLKOUT2_USE_FINE_PS  => FALSE,
+        CLKOUT3_DIVIDE       => 1,
+        CLKOUT3_PHASE        => 0.000,
+        CLKOUT3_DUTY_CYCLE   => 0.500,
+        CLKOUT3_USE_FINE_PS  => FALSE,
         CLKIN1_PERIOD        => 10.000
     )
     port map(
@@ -263,7 +286,7 @@ begin
         CLKOUT1B            => open,
         CLKOUT2             => clkout2,  -- 437.5MHz
         CLKOUT2B            => open,     -- 437.5MHz inverted  (was clkout2b)
-        CLKOUT3             => open,
+        CLKOUT3             => clkout3,  -- 875 MHz
         CLKOUT3B            => open,
         CLKOUT4             => open,
         CLKOUT5             => open,
@@ -297,6 +320,8 @@ begin
     clk1_inst:  BUFG port map( I => clkout1, O => mclk);   -- master clock 62.5MHz
 
     clk2_inst:  BUFG port map( I => clkout2, O => fclk);   -- fast clock 437.5MHz
+    
+    clk3_inst:  BUFG port map( I => clkout3, O => ufclk);   -- ultra fast clock 875MHz
   
     -- square up some async inputs in the mclk domain
     -- also make a fake 64 bit timestamp counter
@@ -332,7 +357,17 @@ begin
     trig_proc: process(mclk)
     begin
         if rising_edge(mclk) then
-            trig_sync <= trig_ext or trig_gbe0_reg or trig_gbe1_reg or trig_gbe2_reg; 
+            trig_sync <= trig_ext or trig_gbe0_reg or trig_gbe1_reg or trig_gbe2_reg 
+            or trigger_wire(0) or trigger_wire(1) or trigger_wire(2) or trigger_wire(3)
+            or trigger_wire(4) or trigger_wire(5) or trigger_wire(6) or trigger_wire(7) 
+            or trigger_wire(8) or trigger_wire(9) or trigger_wire(10) or trigger_wire(11)
+            or trigger_wire(12) or trigger_wire(13) or trigger_wire(14) or trigger_wire(15)
+            or trigger_wire(16) or trigger_wire(17) or trigger_wire(18) or trigger_wire(19)
+            or trigger_wire(20) or trigger_wire(21) or trigger_wire(22) or trigger_wire(23)
+            or trigger_wire(24) or trigger_wire(25) or trigger_wire(26) or trigger_wire(27)
+            or trigger_wire(28) or trigger_wire(29) or trigger_wire(30) or trigger_wire(31)
+            or trigger_wire(32) or trigger_wire(33) or trigger_wire(34) or trigger_wire(35)
+            or trigger_wire(36) or trigger_wire(37) or trigger_wire(38) or trigger_wire(39); 
         end if;
     end process trig_proc;
 
@@ -431,6 +466,8 @@ begin
     gen_bs_afe: for a in 4 downto 0 generate
         gen_bs_bit: for b in 8 downto 0 generate
             bitslip_mclk(a)(b) <= '1' when ( bitslip1_mclk_reg(a)(b)='0' and bitslip0_mclk_reg(a)(b)='1' ) else '0';
+            afe_dout_pad_bits(((a*9 + b)*16 + 15) downto ((a*9 + b)*16)) <= afe_dout(a)(b);
+            afe_dout_filtered(a)(b) <= afe_dout_pad_filtered_bits(((a*9 + b)*16 + 15) downto ((a*9 + b)*16));
         end generate gen_bs_bit;
     end generate gen_bs_afe;
 
@@ -457,6 +494,18 @@ begin
         q => afe_dout -- mclk domain 5x9x16
     );
 
+    filter_inst: hpf_pedestal_recovery_filter_v5
+    port map(
+        clk => mclk,
+        reset => fe_reset,
+        n_1_reset => '0',
+        enable => led_temp(1),
+        output_selector => (others => '0'),
+        x => afe_dout_pad_bits,
+        trigger_output => trigger_wire,
+        y => afe_dout_pad_filtered_bits
+    );
+
     -- make 45 spy buffers for AFE data, these buffers are READ ONLY
 
     gen_spy_afe: for a in 4 downto 0 generate
@@ -467,7 +516,7 @@ begin
                 clka  => mclk,
                 reset => reset_mclk,
                 trig  => trig_sync,
-                dia   => afe_dout(a)(b),
+                dia   => afe_dout_filtered(a)(b),
                 -- oeiclk domain    
                 clkb  => oeiclk,
                 addrb => rx_addr_reg(11 downto 0),

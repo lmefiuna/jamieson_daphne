@@ -1,0 +1,9 @@
+{
+	"version": "1.0",
+	"modules": {
+		"IIR_filter_fast_design": {
+			"proto_instances": {
+			}
+		}
+	}
+}

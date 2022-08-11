@@ -5,10 +5,11 @@
 
 # general setup stuff...
 
-set_param general.maxThreads 4
+set_param general.maxThreads 8
 set outputDir ./output
 file mkdir $outputDir
 set_part xc7a200t-fbg676-2
+set_property source_mgmt_mode All [current_project]
 
 # load the sources and constraints...
 
@@ -18,6 +19,31 @@ read_vhdl ../src/fe.vhd
 read_vhdl ../src/spy.vhd
 # read_vhdl ../src/sync.vhd
 read_vhdl ../src/top_level.vhd
+# read_verilog ../src/filtroIIR.sv
+read_verilog ../src/filtroIIR_v2.sv
+# read_verilog ../src/hpf_pedestal_recovery_filter.sv
+# read_verilog ../src/hpf_pedestal_recovery_filter_v2.sv
+# read_verilog ../src/hpf_pedestal_recovery_filter_v3.v
+# read_verilog ../src/hpf_pedestal_recovery_filter_v4.sv
+read_verilog ../src/hpf_pedestal_recovery_filter_v5.sv
+# read_verilog ../src/DAPHNE_Integrator_Filter_TF5.v
+# read_verilog ../src/boxcar_filter.v
+# read_verilog ../src/filtroIIR_integrator.v
+read_verilog ../src/filtroIIR_integrator_optimized.v
+read_verilog ../src/filtroIIR_movmean40.v
+read_verilog ../src/filtroIIR_movmean40_cfd.v
+#read_verilog ../src/filtroIIR_integrator_fast.sv
+#read_verilog ../src/accumulator.sv
+#read_verilog ../src/reg_32.sv
+#read_verilog ../src/filter_mem_block.sv
+#read_verilog ../src/filter_rom_block.sv
+#read_verilog ../src/filter_state_machine.sv
+#read_verilog ../src/multiplier.sv
+#read_verilog ../src/mult_and_acc.sv
+#read_verilog ../src/filter_FSM.v
+#read_verilog ../src/filter_mem_block.v
+#read_verilog ../src/filter_rom_block.v 
+#read_verilog ../src/reg_32.v 
 
 read_vhdl ../src/oei/hdl/burst_traffic_controller.vhd
 read_vhdl ../src/oei/hdl/ethernet_interface.vhd
@@ -54,6 +80,9 @@ read_vhdl ../src/oei/ethernet_controller/xmii_handler.vhd
 # which includes the output products.  XCIX does not
 # require synth_ip and generate_target commands
 read_ip ../src/ip/gig_ethernet_pcs_pma_0.xcix
+
+#source ./IIR_filter_fast_design.tcl
+#generate_target all [get_files  .srcs/sources_1/bd/IIR_filter_fast_design/IIR_filter_fast_design.bd]
 
 # Load IP module as *.xci
 #read_ip ../src/ip/gig_ethernet_pcs_pma_0.xci
@@ -92,6 +121,7 @@ report_timing -sort_by group -max_paths 100 -path_type summary -file $outputDir/
 # route...
 
 route_design
+phys_opt_design -directive AggressiveExplore
 write_checkpoint -force $outputDir/post_route
 
 # generate reports...
