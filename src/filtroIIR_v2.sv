@@ -1,3 +1,15 @@
+`timescale 1ns/10ps
+//////////////////////////////////////////////////////////////////////////////////
+// University: UNIMIB 
+// Engineer: Esteban Cristaldo, MSc
+//
+// Create Date: July 1, 2022, 5:51:46 PM
+// Design Name: filtering_and_selftrigger
+// Module Name: filtroIIR_V2
+// Project Name: selftrigger@bicocca
+// Target Devices: DAPHNE V1
+//
+//////////////////////////////////////////////////////////////////////////////////
 module filtroIIR_V2(
 	input wire clk,
 	input wire reset, 
@@ -11,7 +23,8 @@ module filtroIIR_V2(
 	reg signed [15:0] en_mux, out_reg, x_i;
 	reg signed [64:0] mean;
 	reg [64:0] counter;	
-	reg reset_reg, enable_reg;
+	(* dont_touch = "true" *) reg reset_reg;
+	(* dont_touch = "true" *) reg enable_reg;
 	
 	wire finish_signal; 
 	

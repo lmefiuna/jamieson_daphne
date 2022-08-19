@@ -1,21 +1,13 @@
 `timescale 1ns / 10ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer: Esteban Cristaldo
+// University: UNIMIB 
+// Engineer: Esteban Cristaldo, MSc
 //
-// Create Date: 07/05/2022 02:54:52 PM
-// Design Name:
-// Module Name: filtroIIR_integrator
-// Project Name:
-// Target Devices:
-// Tool Versions:
-// Description:
-//
-// Dependencies:
-//
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
+// Create Date: July 28, 2022, 9:11:03 AM
+// Design Name: filtering_and_selftrigger
+// Module Name: filtroIIR_movmean40_cfd
+// Project Name: selftrigger@bicocca
+// Target Devices: DAPHNE V1
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -56,7 +48,7 @@ module filtroIIR_movmean40_cfd(
 	always @(posedge clk) begin
 		if(reset_reg) begin
       
-      // ********** FBK *********** //
+        // ********** FBK *********** //
 		 n1 <= {3'b000,15'b001100011001011};
 		 n2 <= {3'b111,15'b101000001110111}; // n2 0101111100010001
 		 n3 <= {3'b000,15'b001100000101101}; // n3 001100000101101

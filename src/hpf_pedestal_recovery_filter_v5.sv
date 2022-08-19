@@ -1,4 +1,15 @@
 `timescale 1ns/10ps
+//////////////////////////////////////////////////////////////////////////////////
+// University: UNIMIB 
+// Engineer: Esteban Cristaldo, MSc
+//
+// Create Date: July 14, 2022, 11:53:42 AM
+// Design Name: filtering_and_selftrigger
+// Module Name: filtroIIR_integrator_optimized
+// Project Name: selftrigger@bicocca
+// Target Devices: DAPHNE V1
+//
+//////////////////////////////////////////////////////////////////////////////////
 module hpf_pedestal_recovery_filter_v5(
 	input wire clk,
 	input wire fclk,

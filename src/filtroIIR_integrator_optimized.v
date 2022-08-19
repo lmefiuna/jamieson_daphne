@@ -1,21 +1,13 @@
 `timescale 1ns / 10ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer: Esteban Cristaldo
+// University: UNIMIB 
+// Engineer: Esteban Cristaldo, MSc
 //
-// Create Date: 07/05/2022 02:54:52 PM
-// Design Name:
-// Module Name: filtroIIR_integrator
-// Project Name:
-// Target Devices:
-// Tool Versions:
-// Description:
-//
-// Dependencies:
-//
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
+// Create Date: July 22, 2022, 1:50:22 PM
+// Design Name: filtering_and_selftrigger
+// Module Name: filtroIIR_integrator_optimized
+// Project Name: selftrigger@bicocca
+// Target Devices: DAPHNE V1
 //
 //////////////////////////////////////////////////////////////////////////////////
 
