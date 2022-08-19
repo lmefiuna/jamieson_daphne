@@ -5,7 +5,7 @@
 //
 // Create Date: July 28, 2022, 9:11:03 AM
 // Design Name: filtering_and_selftrigger
-// Module Name: filtroIIR_movmean40_cfd
+// Module Name: filtroIIR_movmean40_cfd.v
 // Project Name: selftrigger@bicocca
 // Target Devices: DAPHNE V1
 //
@@ -22,7 +22,7 @@ module filtroIIR_movmean40_cfd(
     output wire signed[15:0] y
     );
 
-  parameter shift_delay = 40;
+  parameter shift_delay = 15;
   parameter threshold = -9;
 
   reg signed [17:0] n1, n2, n3, d1, d2;

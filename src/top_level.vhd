@@ -357,17 +357,17 @@ begin
     trig_proc: process(mclk)
     begin
         if rising_edge(mclk) then
-            trig_sync <= trig_ext or trig_gbe0_reg or trig_gbe1_reg or trig_gbe2_reg 
-            or trigger_wire(0) or trigger_wire(1) or trigger_wire(2) or trigger_wire(3)
-            or trigger_wire(4) or trigger_wire(5) or trigger_wire(6) or trigger_wire(7) 
-            or trigger_wire(8) or trigger_wire(9) or trigger_wire(10) or trigger_wire(11)
-            or trigger_wire(12) or trigger_wire(13) or trigger_wire(14) or trigger_wire(15)
-            or trigger_wire(16) or trigger_wire(17) or trigger_wire(18) or trigger_wire(19)
-            or trigger_wire(20) or trigger_wire(21) or trigger_wire(22) or trigger_wire(23)
-            or trigger_wire(24) or trigger_wire(25) or trigger_wire(26) or trigger_wire(27)
-            or trigger_wire(28) or trigger_wire(29) or trigger_wire(30) or trigger_wire(31)
-            or trigger_wire(32) or trigger_wire(33) or trigger_wire(34) or trigger_wire(35)
-            or trigger_wire(36) or trigger_wire(37) or trigger_wire(38) or trigger_wire(39); 
+            trig_sync <= trig_ext or trig_gbe0_reg or trig_gbe1_reg or trig_gbe2_reg or trigger_wire(0);
+            -- or trigger_wire(0) or trigger_wire(1) or trigger_wire(2) or trigger_wire(3)
+            -- or trigger_wire(4) or trigger_wire(5) or trigger_wire(6) or trigger_wire(7) 
+            -- or trigger_wire(8) or trigger_wire(9) or trigger_wire(10) or trigger_wire(11)
+            -- or trigger_wire(12) or trigger_wire(13) or trigger_wire(14) or trigger_wire(15)
+            -- or trigger_wire(16) or trigger_wire(17) or trigger_wire(18) or trigger_wire(19)
+            -- or trigger_wire(20) or trigger_wire(21) or trigger_wire(22) or trigger_wire(23)
+            -- or trigger_wire(24) or trigger_wire(25) or trigger_wire(26) or trigger_wire(27)
+            -- or trigger_wire(28) or trigger_wire(29) or trigger_wire(30) or trigger_wire(31)
+            -- or trigger_wire(32) or trigger_wire(33) or trigger_wire(34) or trigger_wire(35)
+            -- or trigger_wire(36) or trigger_wire(37) or trigger_wire(38) or trigger_wire(39); 
         end if;
     end process trig_proc;
 

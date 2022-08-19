@@ -5,7 +5,7 @@
 //
 // Create Date: July 22, 2022, 1:50:22 PM
 // Design Name: filtering_and_selftrigger
-// Module Name: filtroIIR_integrator_optimized
+// Module Name: filtroIIR_integrator_optimized.v
 // Project Name: selftrigger@bicocca
 // Target Devices: DAPHNE V1
 //
