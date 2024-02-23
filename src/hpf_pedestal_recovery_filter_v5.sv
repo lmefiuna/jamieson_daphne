@@ -36,7 +36,7 @@ module hpf_pedestal_recovery_filter_v5(
 		for(i=0; i<=4; i=i+1) begin : i_instance
 		    assign y[((i*9 + 8)*16 + 15) : ((i*9 + 8)*16)] = x[((i*9 + 8)*16 + 15) : ((i*9 + 8)*16)]; // (i*9 + j)*16
             for(j=0; j<=7; j=j+1) begin : j_instance
-                //if(i == 2 && j == 0) begin // comment to have 40 channels
+                //if(i == 1 && j == 0) begin // comment to have 40 channels
                 filtroIIR_V2 lpf(
                     .clk(clk),
                     .reset(reset),

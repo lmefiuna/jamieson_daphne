@@ -7,6 +7,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
 
 library unisim;
 use unisim.vcomponents.all;
@@ -212,9 +213,18 @@ architecture top_level_arch of top_level is
 	signal reset_async, reset_mclk: std_logic;
     signal fe_reset: std_logic;
 
-    signal trig_sync, trig_gbe: std_logic;
-    signal trig_gbe0_reg, trig_gbe1_reg, trig_gbe2_reg: std_logic;
-
+    signal trig_sync, trig_gbe, trig_int_dead_time, trig_int_dead_time_reg0, trig_int_dead_time_reg1, trig_int_dead_time_reg2, trig_int_dead_time_total: std_logic;
+    signal trig_gbe0_reg, trig_gbe1_reg, trig_gbe2_reg, trig_gbe_total: std_logic;
+    signal trig_internal_enable: std_logic := '1';
+    
+    -- trigger state machine
+    TYPE Tstate IS (trig_state_0, trig_state_1);
+    SIGNAL trig_state: Tstate;
+    SIGNAL trig_next_state: Tstate; 
+    signal trig_dead_time_counter: std_logic_vector(11 downto 0) := (others => '0');
+    signal trigger_internal: std_logic := '0';
+    --
+    
     signal sysclk_ibuf, clkfbout, clkfbout_buf, clkout0, clkout1, clkout2, clkout3, locked: std_logic;
     signal sclk: std_logic;
     signal mclk: std_logic;
@@ -344,6 +354,7 @@ begin
     -- square this up and edge detect this and move it into the MCLK domain
 
     trig_gbe <= '1' when (std_match(rx_addr,TRIGGER_ADDR) and rx_wren='1') else '0';
+    trig_int_dead_time <= '1' when (std_match(rx_addr,TRIGGER_INT_DEAD_TIME_ADDR) and rx_wren='1') else '0';
 
     trig_oei_proc: process(oeiclk)
     begin
@@ -353,11 +364,63 @@ begin
             trig_gbe2_reg <= trig_gbe1_reg;
         end if;
     end process trig_oei_proc;
-
+    
+    trig_oei_proc_dead_time: process(oeiclk)
+    begin
+        if rising_edge(oeiclk) then
+            trig_int_dead_time_reg0 <= trig_int_dead_time;
+            trig_int_dead_time_reg1 <= trig_int_dead_time_reg0;
+            trig_int_dead_time_reg2 <= trig_int_dead_time_reg1;
+        end if;
+    end process trig_oei_proc_dead_time;
+    
+    trig_gbe_total <= trig_gbe0_reg or trig_gbe1_reg or trig_gbe2_reg;
+    trig_int_dead_time_total <= trig_int_dead_time_reg0 or trig_int_dead_time_reg1 or trig_int_dead_time_reg2;
+    
+    -- -- process to acount for dead time during reading of spy registers
+    spy_buffer_reading_dead_time: process(trig_int_dead_time_total)
+    begin
+        if rising_edge(trig_int_dead_time_total) then
+            trig_internal_enable <= not trig_internal_enable; 
+        end if;
+    end process spy_buffer_reading_dead_time;
+    
+    trigger_state_machine_state: process(mclk)
+    begin 
+        if (fe_reset = '1') then
+            trig_state <= trig_state_0;
+        elsif rising_edge(mclk) then
+            trig_state <= trig_next_state; 
+        end if; 
+    end process trigger_state_machine_state;
+    
+    trigger_state_machine: process(trig_state)
+    begin 
+        case trig_state is
+            when trig_state_0 =>
+                if(trigger_wire(16) = '1') then
+                    trig_next_state <= trig_state_1;
+                    trigger_internal <= '1';
+                else
+                    trig_next_state <= trig_state_0;
+                end if;
+            when trig_state_1 =>
+                if(trig_dead_time_counter(11) = '1') then
+                    trig_dead_time_counter <= (others => '0');
+                    trig_next_state <= trig_state_0;
+                else
+                    trig_dead_time_counter <= std_logic_vector(unsigned(trig_dead_time_counter) + 1);
+                    trig_next_state <= trig_state_1;
+                    trigger_internal <= '0';
+                end if;     
+        end case;
+    end process trigger_state_machine;
+        
     trig_proc: process(mclk)
     begin
         if rising_edge(mclk) then
-            trig_sync <= trig_ext or trig_gbe0_reg or trig_gbe1_reg or trig_gbe2_reg or trigger_wire(0);
+            trig_sync <= trig_gbe_total or (trig_internal_enable and (trigger_internal or trig_ext)); -- spy buffer dead time 
+            --trig_sync <= trig_ext or trig_align or trig_gbe_total or trigger_wire(16); -- original trigger
             -- or trigger_wire(0) or trigger_wire(1) or trigger_wire(2) or trigger_wire(3)
             -- or trigger_wire(4) or trigger_wire(5) or trigger_wire(6) or trigger_wire(7) 
             -- or trigger_wire(8) or trigger_wire(9) or trigger_wire(10) or trigger_wire(11)

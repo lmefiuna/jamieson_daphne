@@ -29,6 +29,7 @@ package daphne_package is
     -- write anything to this address to force trigger
 
     constant TRIGGER_ADDR:      std_logic_vector(31 downto 0) := X"00002000";
+    constant TRIGGER_INT_DEAD_TIME_ADDR:      std_logic_vector(31 downto 0) := X"00002020";
 
     -- write anything to this address to force reset of the AFE front end logic
 
