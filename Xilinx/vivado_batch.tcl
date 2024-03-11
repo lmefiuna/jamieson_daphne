@@ -5,10 +5,12 @@
 
 # general setup stuff...
 
+create_project -force jamieson-vivado ./jamieson-vivado -part xc7a200t-fbg676-2
+
 set_param general.maxThreads 8
 set outputDir ./output
 file mkdir $outputDir
-set_part xc7a200t-fbg676-2
+# set_part xc7a200t-fbg676-2
 set_property source_mgmt_mode All [current_project]
 
 # load the sources and constraints...
